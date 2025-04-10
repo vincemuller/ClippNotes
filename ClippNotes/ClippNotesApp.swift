@@ -11,7 +11,7 @@ import SwiftUI
 struct ClippNotesApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ProfileScreen()
         }
     }
 }
