@@ -47,7 +47,7 @@ struct ProfileScreen: View {
             ZStack {
                 Color.clippnotesDarkBlue
                     .ignoresSafeArea()
-                VStack (spacing: 20) {
+                VStack (spacing: 15) {
                     Text("ClippNotes")
                         .font(Font.custom("anta-regular", size: 16))
                         .foregroundStyle(Color.clippnotesYellow)
@@ -57,7 +57,7 @@ struct ProfileScreen: View {
                                 UnevenRoundedRectangle(cornerRadii: .init(bottomLeading: 20, bottomTrailing: 20))
                                     .fill(LinearGradient(colors: [Color.clippnotesLightBlue,Color.clippnotesDarkBlue], startPoint: .bottom, endPoint: .top))
                                     .frame(height: 445)
-                                VStack (spacing: 15) {
+                                VStack {
                                     HStack {
                                         VStack (alignment: .leading, spacing: 5) {
                                             Text(customer.name)
@@ -71,144 +71,25 @@ struct ProfileScreen: View {
                                         }
                                         Spacer()
                                     }
-                                    switch selectedHairSection {
-                                    case .front:
+                                    TabView(selection: $selectedHairSection) {
                                         Image("frontImage")
                                             .resizable()
                                             .scaledToFill()
                                             .frame(height: geometryReader.size.height * 0.42)
-                                            .scaleEffect(isDragging ? 0.95 : 1.0)
                                             .clipped()
-                                            .mask {
-                                                RoundedRectangle(cornerRadius: 20)
-                                            }
+                                            .mask(RoundedRectangle(cornerRadius: 20))
                                             .padding(.horizontal)
-                                            .gesture(
-                                                DragGesture(minimumDistance: 20)
-                                                    .onChanged { _ in
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            isDragging = true
-                                                        }
-                                                    }
-                                                    .onEnded { value in
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            isDragging = false
-                                                        }
-                                                        if value.translation.width < -50 {
-                                                            withAnimation {
-                                                                selectedHairSection = nextHairSection(from: selectedHairSection)
-                                                            }
-                                                        } else if value.translation.width > 50 {
-                                                            withAnimation {
-                                                                selectedHairSection = previousHairSection(from: selectedHairSection)
-                                                            }
-                                                        }
-                                                    }
-                                            )
-                                        
-                                    case .back:
+                                            .tag(HairSection.front)
+
                                         Image("backImage")
                                             .resizable()
                                             .scaledToFill()
                                             .frame(height: geometryReader.size.height * 0.42)
-                                            .scaleEffect(isDragging ? 0.95 : 1.0)
                                             .clipped()
-                                            .mask {
-                                                RoundedRectangle(cornerRadius: 20)
-                                            }
+                                            .mask(RoundedRectangle(cornerRadius: 20))
                                             .padding(.horizontal)
-                                            .gesture(
-                                                DragGesture(minimumDistance: 20)
-                                                    .onChanged { _ in
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            isDragging = true
-                                                        }
-                                                    }
-                                                    .onEnded { value in
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            isDragging = false
-                                                        }
-                                                        if value.translation.width < -50 {
-                                                            withAnimation {
-                                                                selectedHairSection = nextHairSection(from: selectedHairSection)
-                                                            }
-                                                        } else if value.translation.width > 50 {
-                                                            withAnimation {
-                                                                selectedHairSection = previousHairSection(from: selectedHairSection)
-                                                            }
-                                                        }
-                                                    }
-                                            )
+                                            .tag(HairSection.back)
                                         
-                                    case .left:
-                                        Image("leftSideImage")
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(height: geometryReader.size.height * 0.42)
-                                            .scaleEffect(isDragging ? 0.95 : 1.0)
-                                            .clipped()
-                                            .mask {
-                                                RoundedRectangle(cornerRadius: 20)
-                                            }
-                                            .padding(.horizontal)
-                                            .gesture(
-                                                DragGesture(minimumDistance: 20)
-                                                    .onChanged { _ in
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            isDragging = true
-                                                        }
-                                                    }
-                                                    .onEnded { value in
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            isDragging = false
-                                                        }
-                                                        if value.translation.width < -50 {
-                                                            withAnimation {
-                                                                selectedHairSection = nextHairSection(from: selectedHairSection)
-                                                            }
-                                                        } else if value.translation.width > 50 {
-                                                            withAnimation {
-                                                                selectedHairSection = previousHairSection(from: selectedHairSection)
-                                                            }
-                                                        }
-                                                    }
-                                            )
-                                        
-                                    case .right:
-                                        Image("rightSideImage")
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(height: geometryReader.size.height * 0.42)
-                                            .scaleEffect(isDragging ? 0.95 : 1.0)
-                                            .clipped()
-                                            .mask {
-                                                RoundedRectangle(cornerRadius: 20)
-                                            }
-                                            .padding(.horizontal)
-                                            .gesture(
-                                                DragGesture(minimumDistance: 20)
-                                                    .onChanged { _ in
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            isDragging = true
-                                                        }
-                                                    }
-                                                    .onEnded { value in
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            isDragging = false
-                                                        }
-                                                        if value.translation.width < -50 {
-                                                            withAnimation {
-                                                                selectedHairSection = nextHairSection(from: selectedHairSection)
-                                                            }
-                                                        } else if value.translation.width > 50 {
-                                                            withAnimation {
-                                                                selectedHairSection = previousHairSection(from: selectedHairSection)
-                                                            }
-                                                        }
-                                                    }
-                                            )
-                                        
-                                    case .all:
                                         VStack(spacing: 0) {
                                             HStack(spacing: 0) {
                                                 Image("frontImage")
@@ -219,7 +100,7 @@ struct ProfileScreen: View {
                                                     .mask {
                                                         UnevenRoundedRectangle(topLeadingRadius: 20)
                                                     }
-                                                    .onTapGesture(count: 2) {
+                                                    .onTapGesture {
                                                         withAnimation(.easeInOut(duration: 0.2)) {
                                                             selectedHairSection = .front
                                                         }
@@ -232,12 +113,13 @@ struct ProfileScreen: View {
                                                     .mask {
                                                         UnevenRoundedRectangle(topTrailingRadius: 20)
                                                     }
-                                                    .onTapGesture(count: 2) {
+                                                    .onTapGesture {
                                                         withAnimation(.easeInOut(duration: 0.2)) {
                                                             selectedHairSection = .left
                                                         }
                                                     }
                                             }
+                                            
                                             HStack(spacing: 0) {
                                                 Image("backImage")
                                                     .resizable()
@@ -247,7 +129,7 @@ struct ProfileScreen: View {
                                                     .mask {
                                                         UnevenRoundedRectangle(bottomLeadingRadius: 20)
                                                     }
-                                                    .onTapGesture(count: 2) {
+                                                    .onTapGesture {
                                                         withAnimation(.easeInOut(duration: 0.2)) {
                                                             selectedHairSection = .back
                                                         }
@@ -261,38 +143,36 @@ struct ProfileScreen: View {
                                                     .mask {
                                                         UnevenRoundedRectangle(bottomTrailingRadius: 20)
                                                     }
-                                                    .onTapGesture(count: 2) {
+                                                    .onTapGesture {
                                                         withAnimation(.easeInOut(duration: 0.2)) {
                                                             selectedHairSection = .right
                                                         }
                                                     }
                                             }
                                         }
+                                        .tag(HairSection.all)
                                         .padding(.horizontal)
-                                        .gesture(
-                                            DragGesture(minimumDistance: 20)
-                                                .onChanged { _ in
-                                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                                        isDragging = true
-                                                    }
-                                                }
-                                                .onEnded { value in
-                                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                                        isDragging = false
-                                                    }
-                                                    if value.translation.width < -50 {
-                                                        withAnimation {
-                                                            selectedHairSection = nextHairSection(from: selectedHairSection)
-                                                        }
-                                                    } else if value.translation.width > 50 {
-                                                        withAnimation {
-                                                            selectedHairSection = previousHairSection(from: selectedHairSection)
-                                                        }
-                                                    }
-                                                }
-                                        )
+                                        
+                                        Image("leftSideImage")
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(height: geometryReader.size.height * 0.42)
+                                            .clipped()
+                                            .mask(RoundedRectangle(cornerRadius: 20))
+                                            .padding(.horizontal)
+                                            .tag(HairSection.left)
+                                        
+                                        Image("rightSideImage")
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(height: geometryReader.size.height * 0.42)
+                                            .clipped()
+                                            .mask(RoundedRectangle(cornerRadius: 20))
+                                            .padding(.horizontal)
+                                            .tag(HairSection.right)
                                     }
-                                    
+                                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                                    .animation(.easeInOut(duration: 0.3), value: selectedHairSection)
                                     LazyVGrid(columns: columns) {
                                         ForEach(HairSection.allCases, id: \.self) {section in
                                             Button {
@@ -311,6 +191,7 @@ struct ProfileScreen: View {
                                         }
                                     }
                                     .padding(.horizontal)
+                                    .padding(.bottom, 7)
                                 }
                                 .frame(maxWidth: .infinity)
                             }
