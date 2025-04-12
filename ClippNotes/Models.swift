@@ -25,9 +25,9 @@ class Haircut: Identifiable {
     var date: Date
     var customerID: UUID
     var notesByView: [String: String]
-    var photosByView: [String: URL]
+    var photosByView: [String: String]
     
-    init(id: UUID = UUID(), date: Date, customerID: UUID, notesByView: [String : String], photosByView: [String : URL]) {
+    init(id: UUID = UUID(), date: Date, customerID: UUID, notesByView: [String : String], photosByView: [String : String]) {
         self.id = id
         self.date = date
         self.customerID = customerID

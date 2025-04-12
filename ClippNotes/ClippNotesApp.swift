@@ -6,12 +6,28 @@
 //
 
 import SwiftUI
+import Amplify
+import AWSAPIPlugin
 
 @main
 struct ClippNotesApp: App {
     var body: some Scene {
         WindowGroup {
             ProfileScreen()
+                .onAppear {
+                    configureAmplify()
+                }
+        }
+
+    }
+    
+    private func configureAmplify() {
+        do {
+            try Amplify.add(plugin: AWSAPIPlugin())
+            try Amplify.configure()
+            print("Amplify configured!")
+        } catch {
+            print("An error occurred setting up Amplify: \(error)")
         }
     }
 }

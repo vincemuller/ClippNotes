@@ -1,0 +1,15 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-clippnotesbackendapp-staging-499a5-authRole",
+      "UnauthRoleArn": "arn:aws:iam::050682269423:role/amplify-clippnotesbackendapp-staging-499a5-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::050682269423:role/amplify-clippnotesbackendapp-staging-499a5-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-clippnotesbackendapp-staging-499a5-deployment",
+      "UnauthRoleName": "amplify-clippnotesbackendapp-staging-499a5-unauthRole",
+      "StackName": "amplify-clippnotesbackendapp-staging-499a5",
+      "StackId": "arn:aws:cloudformation:us-west-2:050682269423:stack/amplify-clippnotesbackendapp-staging-499a5/f1de0500-17ee-11f0-a94d-0221a0e4b9f3",
+      "AmplifyAppId": "dci6j9o14amlq"
+    }
+  }
+}

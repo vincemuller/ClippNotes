@@ -40,6 +40,9 @@ struct ProfileScreen: View {
     @State private var customer = Customer(name: "Sara Muller")
     @State private var selectedHairSection: HairSection = .all
     @State private var isDragging: Bool = false
+    
+    @State private var showCamera = false
+    @State private var capturedImage: UIImage?
 
     
     var body: some View {
@@ -153,14 +156,25 @@ struct ProfileScreen: View {
                                         .tag(HairSection.all)
                                         .padding(.horizontal)
                                         
-                                        Image("leftSideImage")
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(height: geometryReader.size.height * 0.42)
-                                            .clipped()
-                                            .mask(RoundedRectangle(cornerRadius: 20))
-                                            .padding(.horizontal)
-                                            .tag(HairSection.left)
+                                        if let image = capturedImage {
+                                            Image(uiImage: image)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(height: geometryReader.size.height * 0.42)
+                                                .clipped()
+                                                .mask(RoundedRectangle(cornerRadius: 20))
+                                                .padding(.horizontal)
+                                                .tag(HairSection.left)
+                                        } else {
+                                            Image("leftSideImage")
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(height: geometryReader.size.height * 0.42)
+                                                .clipped()
+                                                .mask(RoundedRectangle(cornerRadius: 20))
+                                                .padding(.horizontal)
+                                                .tag(HairSection.left)
+                                        }
                                         
                                         Image("rightSideImage")
                                             .resizable()
@@ -215,7 +229,22 @@ struct ProfileScreen: View {
                                 .foregroundStyle(Color.clippnotesYellow)
                                 .padding(.leading, 20)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            
+                            VStack {
+                                if let image = capturedImage {
+                                    Image(uiImage: image)
+                                        .resizable()
+                                        .scaledToFit()
+                                }
+
+                                Button("Take Photo") {
+                                    showCamera = true
+                                }
+                                .sheet(isPresented: $showCamera) {
+                                    CameraView { image in
+                                        self.capturedImage = image
+                                    }
+                                }
+                            }
                         }
                     }
                 }
