@@ -7,7 +7,9 @@
 
 import SwiftUI
 import Amplify
+import AWSPluginsCore
 import AWSAPIPlugin
+
 
 @main
 struct ClippNotesApp: App {

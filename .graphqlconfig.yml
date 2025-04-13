@@ -1,0 +1,12 @@
+projects:
+  clippnotesbackendapp:
+    schemaPath: graphql/schema.json
+    includes:
+      - ClippNotes/AmplifyModels
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: swift
+        generatedFileName: API.swift
+        docsFilePath: ClippNotes
