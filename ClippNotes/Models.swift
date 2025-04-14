@@ -16,7 +16,7 @@ class Customer {
     init(id: UUID = UUID(), name: String) {
         self.id = id
         self.name = name
-        self.haircuts = [Haircut(date: Date.now, customerID: id, notesByView: ["FRONT": "FRONT TEXT HERE", "BACK": "BACK TEXT HERE", "ALL": "ALL TEXT HERE", "LEFT": "LEFT TEXT HERE", "RIGHT": "RIGHT TEXT HERE"], photosByView: [:])]
+        self.haircuts = [Haircut(date: Date.now, customerID: id, notesByView: ["FRONT": "FRONT TEXT HERE", "BACK": "BACK TEXT HERE", "ALL": "ALL TEXT HERE", "LEFT": "LEFT TEXT HERE", "RIGHT": "RIGHT TEXT HERE"], photosByView: [:]),Haircut(date: Date.now, customerID: id, notesByView: ["FRONT": "FRONT TEXT HERE", "BACK": "BACK TEXT HERE", "ALL": "ALL TEXT HERE", "LEFT": "LEFT TEXT HERE", "RIGHT": "RIGHT TEXT HERE"], photosByView: [:]),Haircut(date: Date.now, customerID: id, notesByView: ["FRONT": "FRONT TEXT HERE", "BACK": "BACK TEXT HERE", "ALL": "ALL TEXT HERE", "LEFT": "LEFT TEXT HERE", "RIGHT": "RIGHT TEXT HERE"], photosByView: [:])]
     }
 }
 

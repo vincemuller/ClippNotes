@@ -43,6 +43,9 @@ struct ProfileScreen: View {
     
     @State private var showCamera = false
     @State private var capturedImage: UIImage?
+    @State private var selectedHaircut: Haircut?
+    
+    @State private var newHairCutSheetIsPresenting: Bool = false
 
     
     var body: some View {
@@ -209,11 +212,23 @@ struct ProfileScreen: View {
                                 }
                                 .frame(maxWidth: .infinity)
                             }
-                            Text("\(selectedHairSection.label.capitalized) Notes")
-                                .font(Font.custom("anta-regular", size: 20))
-                                .foregroundStyle(Color.clippnotesYellow)
-                                .padding(.leading, 20)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            HStack {
+                                Text("\(selectedHairSection.label.capitalized) Notes")
+                                    .font(Font.custom("anta-regular", size: 20))
+                                    .foregroundStyle(Color.clippnotesYellow)
+                                    .padding(.leading, 20)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Spacer()
+                                Button {
+                                    print("edit notes function")
+                                } label: {
+                                    Image(systemName: "ellipsis")
+                                        .font(.system(size: 18, weight: .bold))
+                                        .foregroundStyle(Color.white.opacity(0.5))
+                                }
+                                .padding(.trailing, 25)
+                                .offset(y: 3)
+                            }
                             ZStack {
                                 RoundedRectangle(cornerRadius: 15)
                                     .fill(LinearGradient(colors: [Color.clippnotesLightBlue,Color.clippnotesVeryLightBlue, Color.clippnotesLightBlue], startPoint: .topLeading, endPoint: .bottomTrailing).opacity(0.5))
@@ -224,31 +239,60 @@ struct ProfileScreen: View {
                                     .foregroundStyle(.white)
                             }
                             .frame(height: geometryReader.size.height * 0.25)
-                            Text("Haircuts")
-                                .font(Font.custom("anta-regular", size: 20))
-                                .foregroundStyle(Color.clippnotesYellow)
-                                .padding(.leading, 20)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            VStack {
-                                if let image = capturedImage {
-                                    Image(uiImage: image)
-                                        .resizable()
-                                        .scaledToFit()
+                            HStack {
+                                Text("Haircuts")
+                                    .font(Font.custom("anta-regular", size: 20))
+                                    .foregroundStyle(Color.clippnotesYellow)
+                                    .padding(.leading, 20)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Spacer()
+                                Button {
+                                    newHairCutSheetIsPresenting = true
+                                } label: {
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 18, weight: .bold))
+                                        .foregroundStyle(Color.green)
                                 }
+                                .padding(.trailing, 25)
+                                .offset(y: 3)
+                            }
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(LinearGradient(colors: [Color.clippnotesLightBlue, Color.clippnotesVeryLightBlue, Color.clippnotesLightBlue], startPoint: .topLeading, endPoint: .bottomTrailing).opacity(0.5))
+                                    .stroke(Color.white.opacity(0.5), lineWidth: 1)
 
-                                Button("Take Photo") {
-                                    showCamera = true
-                                }
-                                .sheet(isPresented: $showCamera) {
-                                    CameraView { image in
-                                        self.capturedImage = image
+                                ScrollView {
+                                    VStack (spacing: 0) {
+                                        ForEach(customer.haircuts) { haircut in
+                                            ZStack {
+                                                haircut.id == selectedHaircut?.id ?
+                                                Color.clippnotesVeryLightBlue : Color.clear
+                                                VStack {
+                                                    HistoryCellView(haircut: haircut)
+                                                        .onTapGesture {
+                                                            selectedHaircut = haircut
+                                                        }
+                                                }
+                                            }
+                                        }
                                     }
                                 }
+                                .frame(height: 250)
+                                .mask {
+                                    RoundedRectangle(cornerRadius: 12)
+                                }
                             }
+                            .padding(.horizontal)
+                            
                         }
                     }
                 }
             }
+        }
+        .sheet(isPresented: $newHairCutSheetIsPresenting) {
+        }
+        .onAppear {
+            selectedHaircut = customer.haircuts[0]
         }
     }
     
@@ -268,3 +312,21 @@ struct ProfileScreen: View {
 #Preview {
     ProfileScreen()
 }
+
+
+//VStack {
+//    if let image = capturedImage {
+//        Image(uiImage: image)
+//            .resizable()
+//            .scaledToFit()
+//    }
+//
+//    Button("Take Photo") {
+//        showCamera = true
+//    }
+//    .sheet(isPresented: $showCamera) {
+//        CameraView { image in
+//            self.capturedImage = image
+//        }
+//    }
+//}
