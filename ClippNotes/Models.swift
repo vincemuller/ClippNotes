@@ -8,30 +8,68 @@
 import Foundation
 
 
-class Customer {
+class Customer_ {
     var id = UUID()
     var name: String
-    var haircuts: [Haircut]
+    var haircuts: [HaircutReferences]
     
     init(id: UUID = UUID(), name: String) {
         self.id = id
         self.name = name
-        self.haircuts = [Haircut(date: Date.now, customerID: id, notesByView: ["FRONT": "FRONT TEXT HERE", "BACK": "BACK TEXT HERE", "ALL": "ALL TEXT HERE", "LEFT": "LEFT TEXT HERE", "RIGHT": "RIGHT TEXT HERE"], photosByView: [:]),Haircut(date: Date.now, customerID: id, notesByView: ["FRONT": "FRONT TEXT HERE", "BACK": "BACK TEXT HERE", "ALL": "ALL TEXT HERE", "LEFT": "LEFT TEXT HERE", "RIGHT": "RIGHT TEXT HERE"], photosByView: [:]),Haircut(date: Date.now, customerID: id, notesByView: ["FRONT": "FRONT TEXT HERE", "BACK": "BACK TEXT HERE", "ALL": "ALL TEXT HERE", "LEFT": "LEFT TEXT HERE", "RIGHT": "RIGHT TEXT HERE"], photosByView: [:])]
+        self.haircuts = []
     }
 }
 
-class Haircut: Identifiable {
-    var id = UUID()
-    var date: Date
-    var customerID: UUID
-    var notesByView: [String: String]
-    var photosByView: [String: String]
+struct HairView: Codable {
+    var front: String
+    var back: String
+    var left: String
+    var right: String
+    var all: String?
+}
+
+class HaircutReferences: Identifiable {
+    var notesByView: HairView
+    var photosByView: HairView
     
-    init(id: UUID = UUID(), date: Date, customerID: UUID, notesByView: [String : String], photosByView: [String : String]) {
-        self.id = id
-        self.date = date
-        self.customerID = customerID
+    init(notesByView: HairView, photosByView: HairView) {
         self.notesByView = notesByView
         self.photosByView = photosByView
+    }
+    
+    func getNotesJson() -> String {
+        var encodedString: String = ""
+        
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.outputFormatting = .prettyPrinted
+
+        do {
+            let encodeNotes = try jsonEncoder.encode(self.notesByView)
+            
+            encodedString = String(data: encodeNotes, encoding: .utf8)!
+
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        return encodedString
+    }
+    
+    func getPhotosJson() -> String {
+        var encodedString: String = ""
+        
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.outputFormatting = .prettyPrinted
+
+        do {
+            let encodeNotes = try jsonEncoder.encode(self.photosByView)
+            
+            encodedString = String(data: encodeNotes, encoding: .utf8)!
+
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        return encodedString
     }
 }

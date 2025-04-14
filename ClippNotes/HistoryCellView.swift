@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
+import Amplify
 
 struct HistoryCellView: View {
     
     @State var haircut: Haircut
-    @State var selected: Bool = false
     
     var body: some View {
         VStack {
@@ -21,15 +21,18 @@ struct HistoryCellView: View {
                     .cornerRadius(8)
                 
                 VStack(alignment: .leading) {
-                    Text("April 5, 2025")
+                    Text("\(haircut.date?.iso8601FormattedString(format: .short) ?? "")")
+                        .font(.system(size: 10))
+                        .foregroundStyle(.white)
+                    Text("Stylist: \(haircut.stylist ?? "")")
                         .font(.system(size: 12))
                         .foregroundStyle(.white)
-                    Text("Stylist: Jamie Mcmain")
+                    Text(haircut.decodeNotesJSON().front)
                         .font(.system(size: 14))
                         .foregroundStyle(.white)
-                    Text("“Tapered fade with hard part…”")
-                        .font(.system(size: 14))
-                        .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.7)
+                        .frame(height: 30, alignment: .topLeading)
                 }
                 Spacer()
             }
@@ -38,9 +41,10 @@ struct HistoryCellView: View {
                 .fill(.white.opacity(0.3))
                 .frame(height: 1)
         }
+
     }
 }
 
 #Preview {
-    HistoryCellView(haircut: Haircut(date: Date(), customerID: UUID(), notesByView: [:], photosByView: [:]))
+    HistoryCellView(haircut: Haircut(date: Temporal.DateTime.now(), stylist: "Stacy Brookes", photosByView: "", notesByView: "", customerID: ""))
 }

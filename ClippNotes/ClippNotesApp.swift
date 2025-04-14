@@ -6,30 +6,25 @@
 //
 
 import SwiftUI
-import Amplify
-import AWSPluginsCore
-import AWSAPIPlugin
 
 
 @main
 struct ClippNotesApp: App {
+    
+    @StateObject var viewModel = ViewModel()
+    
     var body: some Scene {
         WindowGroup {
-            ProfileScreen()
+            CustomerListScreen()
+                .environmentObject(viewModel)
                 .onAppear {
-                    configureAmplify()
+                    viewModel.configureAmplify()
+                    Task {
+                        await viewModel.getCustomers()
+                    }
                 }
         }
 
     }
-    
-    private func configureAmplify() {
-        do {
-            try Amplify.add(plugin: AWSAPIPlugin())
-            try Amplify.configure()
-            print("Amplify configured!")
-        } catch {
-            print("An error occurred setting up Amplify: \(error)")
-        }
-    }
+
 }

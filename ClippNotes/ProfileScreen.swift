@@ -36,16 +36,19 @@ let columns: [GridItem] = [GridItem(.flexible()),
 
 
 struct ProfileScreen: View {
+    @EnvironmentObject var viewModel: ViewModel
     
-    @State private var customer = Customer(name: "Sara Muller")
+    @State var selectedCustomer: Customer = Customer(name: "")
     @State private var selectedHairSection: HairSection = .all
     @State private var isDragging: Bool = false
     
     @State private var showCamera = false
     @State private var capturedImage: UIImage?
-    @State private var selectedHaircut: Haircut?
     
     @State private var newHairCutSheetIsPresenting: Bool = false
+    private var selectedHaircut: Haircut {
+        return viewModel.selectedCustomerHaircuts[0]
+    }
 
     
     var body: some View {
@@ -66,7 +69,7 @@ struct ProfileScreen: View {
                                 VStack {
                                     HStack {
                                         VStack (alignment: .leading, spacing: 5) {
-                                            Text(customer.name)
+                                            Text(viewModel.selectedCustomer.name)
                                                 .font(Font.custom("anta-regular", size: 25))
                                                 .foregroundStyle(Color.white)
                                                 .padding(.leading, 20)
@@ -111,7 +114,7 @@ struct ProfileScreen: View {
                                                             selectedHairSection = .front
                                                         }
                                                     }
-                                                Image("leftSideImage")
+                                                Image("leftImage")
                                                     .resizable()
                                                     .scaledToFill()
                                                     .frame(height: geometryReader.size.height * 0.21)
@@ -141,7 +144,7 @@ struct ProfileScreen: View {
                                                         }
                                                     }
                                                 
-                                                Image("rightSideImage")
+                                                Image("rightImage")
                                                     .resizable()
                                                     .scaledToFill()
                                                     .frame(height: geometryReader.size.height * 0.21)
@@ -169,7 +172,7 @@ struct ProfileScreen: View {
                                                 .padding(.horizontal)
                                                 .tag(HairSection.left)
                                         } else {
-                                            Image("leftSideImage")
+                                            Image("leftImage")
                                                 .resizable()
                                                 .scaledToFill()
                                                 .frame(height: geometryReader.size.height * 0.42)
@@ -179,7 +182,7 @@ struct ProfileScreen: View {
                                                 .tag(HairSection.left)
                                         }
                                         
-                                        Image("rightSideImage")
+                                        Image("rightImage")
                                             .resizable()
                                             .scaledToFill()
                                             .frame(height: geometryReader.size.height * 0.42)
@@ -229,14 +232,44 @@ struct ProfileScreen: View {
                                 .padding(.trailing, 25)
                                 .offset(y: 3)
                             }
-                            ZStack {
+                            ZStack (alignment: .topLeading) {
                                 RoundedRectangle(cornerRadius: 15)
                                     .fill(LinearGradient(colors: [Color.clippnotesLightBlue,Color.clippnotesVeryLightBlue, Color.clippnotesLightBlue], startPoint: .topLeading, endPoint: .bottomTrailing).opacity(0.5))
                                     .stroke(Color.white.opacity(0.5), lineWidth: 1)
                                     .padding(.horizontal)
-                                Text(customer.haircuts[0].notesByView[selectedHairSection.label] ?? "")
-                                    .font(.system(size: 14))
-                                    .foregroundStyle(.white)
+                                switch selectedHairSection {
+                                case .front:
+                                    Text(viewModel.selectedHaircut.decodeNotesJSON().front)
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 30)
+                                        .padding(.vertical, 10)
+                                case .back:
+                                    Text(viewModel.selectedHaircut.decodeNotesJSON().back)
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 30)
+                                        .padding(.vertical, 10)
+                                case .all:
+                                    Text(viewModel.selectedHaircut.decodeNotesJSON().all ?? "")
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 30)
+                                        .padding(.vertical, 10)
+                                case .left:
+                                    Text(viewModel.selectedHaircut.decodeNotesJSON().left)
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 30)
+                                        .padding(.vertical, 10)
+                                case .right:
+                                    Text(viewModel.selectedHaircut.decodeNotesJSON().right)
+                                        .font(.system(size: 14))
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 30)
+                                        .padding(.vertical, 10)
+                                }
+
                             }
                             .frame(height: geometryReader.size.height * 0.25)
                             HStack {
@@ -248,6 +281,9 @@ struct ProfileScreen: View {
                                 Spacer()
                                 Button {
                                     newHairCutSheetIsPresenting = true
+                                    Task {
+                                        await viewModel.createHaircut(customerID: viewModel.selectedCustomer.id, haircut: HaircutReferences(notesByView: HairView(front: "Trimmed 1 inch off the bangs and softened the corners for a more rounded look. Light layering around the face to frame features.", back: "Tapered the nape for a cleaner neckline. Layers added for movement; maintained shoulder length overall.", left: "Blended the left sideburn area and trimmed around the ear. Matched the angle of the right side.", right: "Trimmed right side evenly with slight texturizing near the temple. Checked for symmetry with left side.", all: ""), photosByView: HairView(front: "frontImage", back: "backImage", left: "leftImage", right: "rightImage")))
+                                    }
                                 } label: {
                                     Image(systemName: "plus")
                                         .font(.system(size: 18, weight: .bold))
@@ -263,14 +299,14 @@ struct ProfileScreen: View {
 
                                 ScrollView {
                                     VStack (spacing: 0) {
-                                        ForEach(customer.haircuts) { haircut in
+                                        ForEach(viewModel.selectedCustomerHaircuts, id: \.id) { haircut in
                                             ZStack {
-                                                haircut.id == selectedHaircut?.id ?
+                                                haircut.id == viewModel.selectedHaircut.id ?
                                                 Color.clippnotesVeryLightBlue : Color.clear
                                                 VStack {
                                                     HistoryCellView(haircut: haircut)
                                                         .onTapGesture {
-                                                            selectedHaircut = haircut
+                                                            viewModel.selectedHaircut = haircut
                                                         }
                                                 }
                                             }
@@ -291,18 +327,15 @@ struct ProfileScreen: View {
         }
         .sheet(isPresented: $newHairCutSheetIsPresenting) {
         }
-        .onAppear {
-            selectedHaircut = customer.haircuts[0]
-        }
     }
     
-    func nextHairSection(from current: HairSection) -> HairSection {
+    private func nextHairSection(from current: HairSection) -> HairSection {
         let all = HairSection.allCases
         guard let index = all.firstIndex(of: current) else { return .all }
         return all[(index + 1) % all.count]
     }
 
-    func previousHairSection(from current: HairSection) -> HairSection {
+    private func previousHairSection(from current: HairSection) -> HairSection {
         let all = HairSection.allCases
         guard let index = all.firstIndex(of: current) else { return .all }
         return all[(index - 1 + all.count) % all.count]
@@ -310,7 +343,10 @@ struct ProfileScreen: View {
 }
 
 #Preview {
+    var viewModel = ViewModel()
+    
     ProfileScreen()
+        .environmentObject(viewModel)
 }
 
 
