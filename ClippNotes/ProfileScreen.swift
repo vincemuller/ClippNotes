@@ -235,7 +235,24 @@ struct ProfileScreen: View {
                                     .stroke(Color.white.opacity(0.5), lineWidth: 1)
                                     .padding(.horizontal)
                                 
-                                Text(noteForSection(selectedHairSection))
+                                let notes = viewModel.selectedHaircut.decodeNotesJSON()
+
+                                let noteText: String = {
+                                    switch selectedHairSection {
+                                    case .front:
+                                        return notes.front
+                                    case .back:
+                                        return notes.back
+                                    case .left:
+                                        return notes.left
+                                    case .right:
+                                        return notes.right
+                                    case .all:
+                                        return notes.all ?? ""
+                                    }
+                                }()
+                                
+                                Text(noteText)
                                         .font(.system(size: 14))
                                         .foregroundStyle(.white)
                                         .frame(width: 320, height: geometryReader.size.height * 0.20, alignment: .topLeading)
@@ -254,7 +271,8 @@ struct ProfileScreen: View {
                                 Button {
                                     newHairCutSheetIsPresenting = true
                                     Task {
-                                        await viewModel.createHaircut(customerID: viewModel.selectedCustomer.id, haircut: HaircutReferences(notesByView: HairView(front: "Trimmed 1 inch off the bangs and softened the corners for a more rounded look. Light layering around the face to frame features.", back: "Tapered the nape for a cleaner neckline. Layers added for movement; maintained shoulder length overall.", left: "Blended the left sideburn area and trimmed around the ear. Matched the angle of the right side.", right: "Trimmed right side evenly with slight texturizing near the temple. Checked for symmetry with left side.", all: ""), photosByView: HairView(front: "frontImage", back: "backImage", left: "leftImage", right: "rightImage")))
+                                        await viewModel.createHaircut(customerID: viewModel.selectedCustomer.id, haircut: HaircutReferences(notesByView: HairView(front: "Trimmed 1 inch off the bangs and softened the corners for a more rounded look. Light layering around the face to frame features.", back: "Tapered the nape for a cleaner neckline. Layers added for movement; maintained shoulder length overall.", left: "Blended the left sideburn area and trimmed around the ear. Matched the angle of the right side.", right: "Trimmed right side evenly with slight texturizing near the temple. Checked for symmetry with left side.", all: "New all notes text!"), photosByView: HairView(front: "frontImage", back: "backImage", left: "leftImage", right: "rightImage")))
+                                        await viewModel.getCustomerHaircuts()
                                     }
                                 } label: {
                                     Image(systemName: "plus")
@@ -280,6 +298,7 @@ struct ProfileScreen: View {
                                                     HistoryCellView(haircut: haircut)
                                                         .onTapGesture {
                                                             viewModel.selectedHaircut = haircut
+                                                            selectedHairSection = .all
                                                         }
                                                 }
                                             }
@@ -299,22 +318,6 @@ struct ProfileScreen: View {
             }
         }
         .sheet(isPresented: $newHairCutSheetIsPresenting) {
-        }
-    }
-    
-    private func noteForSection(_ section: HairSection) -> String {
-        let front = viewModel.haircutNotes.front
-        let back = viewModel.haircutNotes.back
-        let all = viewModel.haircutNotes.all
-        let left = viewModel.haircutNotes.left
-        let right = viewModel.haircutNotes.right
-        
-        switch section {
-        case .front: return front
-        case .back: return back
-        case .left: return left
-        case .right: return right
-        case .all: return all ?? ""
         }
     }
     

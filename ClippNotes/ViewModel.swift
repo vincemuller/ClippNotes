@@ -17,7 +17,6 @@ class ViewModel: ObservableObject {
         notesByView: "",
         customerID: ""
     )
-    @Published var haircutNotes: HairView = HairView(front: "", back: "", left: "", right: "", all: "")
 
     init() {}
 
@@ -53,6 +52,7 @@ class ViewModel: ObservableObject {
         }
     }
 
+
     func getCustomerHaircuts() async {
         let predicate = Haircut.keys.customerID == selectedCustomer.id
         let request = GraphQLRequest<Haircut>.list(Haircut.self, where: predicate)
@@ -61,10 +61,11 @@ class ViewModel: ObservableObject {
             let result = try await Amplify.API.query(request: request)
             switch result {
             case .success(let haircuts):
-                self.selectedCustomerHaircuts = Array(haircuts)
+                self.selectedCustomerHaircuts = Array(haircuts).sorted {
+                    $0.date?.iso8601String ?? "" > $1.date?.iso8601String ?? ""
+                }
                 if let firstHaircut = haircuts.first {
                     self.selectedHaircut = firstHaircut
-                    self.haircutNotes = firstHaircut.decodeNotesJSON()
                 }
                 print("Retrieved \(haircuts.count) haircuts")
             case .failure(let error):
