@@ -2,7 +2,7 @@
 import Amplify
 import Foundation
 
-public struct Customer: Model {
+public struct Client: Model {
   public let id: String
   public var name: String
   public var Haircuts: List<Haircut>?

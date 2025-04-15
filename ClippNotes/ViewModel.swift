@@ -7,8 +7,8 @@ import AWSAPIPlugin
 class ViewModel: ObservableObject {
     
     @Published var stylist: String = "Stacy Longstromb"
-    @Published var customers: [Customer] = []
-    @Published var selectedCustomer: Customer = Customer(name: "")
+    @Published var customers: [Client] = []
+    @Published var selectedCustomer: Client = Client(name: "")
     @Published var selectedCustomerHaircuts: [Haircut] = []
     @Published var selectedHaircut: Haircut = Haircut(
         date: Temporal.DateTime.now(),
@@ -17,6 +17,7 @@ class ViewModel: ObservableObject {
         notesByView: "",
         customerID: ""
     )
+    @Published var haircutNotes: HairView = HairView(front: "", back: "", left: "", right: "", all: "")
 
     init() {}
 
@@ -31,7 +32,7 @@ class ViewModel: ObservableObject {
     }
 
     func getCustomers() async {
-        let request = GraphQLRequest<Customer>.list(Customer.self)
+        let request = GraphQLRequest<Client>.list(Client.self)
         
         do {
             let result = try await Amplify.API.query(request: request)
@@ -63,6 +64,7 @@ class ViewModel: ObservableObject {
                 self.selectedCustomerHaircuts = Array(haircuts)
                 if let firstHaircut = haircuts.first {
                     self.selectedHaircut = firstHaircut
+                    self.haircutNotes = firstHaircut.decodeNotesJSON()
                 }
                 print("Retrieved \(haircuts.count) haircuts")
             case .failure(let error):

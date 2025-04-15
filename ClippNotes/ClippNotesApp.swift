@@ -15,7 +15,7 @@ struct ClippNotesApp: App {
     
     var body: some Scene {
         WindowGroup {
-            CustomerListScreen()
+            ClientListScreen()
                 .environmentObject(viewModel)
                 .onAppear {
                     viewModel.configureAmplify()

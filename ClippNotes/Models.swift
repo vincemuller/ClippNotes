@@ -8,18 +8,6 @@
 import Foundation
 
 
-class Customer_ {
-    var id = UUID()
-    var name: String
-    var haircuts: [HaircutReferences]
-    
-    init(id: UUID = UUID(), name: String) {
-        self.id = id
-        self.name = name
-        self.haircuts = []
-    }
-}
-
 struct HairView: Codable {
     var front: String
     var back: String

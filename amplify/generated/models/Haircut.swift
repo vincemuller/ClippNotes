@@ -2,7 +2,7 @@
 import Amplify
 import Foundation
 
-public struct Haircut: Model {
+public struct Haircut: Model, Equatable {
   public let id: String
   public var date: Temporal.DateTime?
   public var stylist: String?

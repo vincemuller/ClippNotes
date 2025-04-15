@@ -29,7 +29,7 @@ extension Haircut {
     model.syncPluralName = "Haircuts"
     
     model.attributes(
-      .index(fields: ["customerID"], name: "byCustomer"),
+      .index(fields: ["customerID"], name: "byClient"),
       .primaryKey(fields: [haircut.id])
     )
     

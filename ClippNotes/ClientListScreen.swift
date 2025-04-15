@@ -7,7 +7,7 @@
 import SwiftUI
 
 
-struct CustomerListScreen: View {
+struct ClientListScreen: View {
     @EnvironmentObject var viewModel: ViewModel
     @State private var navigation = NavigationPath()
 
@@ -70,5 +70,5 @@ struct CustomerListScreen: View {
 }
 
 #Preview {
-    CustomerListScreen()
+    ClientListScreen()
 }

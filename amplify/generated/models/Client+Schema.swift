@@ -2,7 +2,7 @@
 import Amplify
 import Foundation
 
-extension Customer {
+extension Client {
   // MARK: - CodingKeys 
    public enum CodingKeys: String, ModelKey {
     case id
@@ -16,30 +16,30 @@ extension Customer {
   //  MARK: - ModelSchema 
   
   public static let schema = defineSchema { model in
-    let customer = Customer.keys
+    let client = Client.keys
     
     model.authRules = [
       rule(allow: .public, operations: [.create, .update, .delete, .read])
     ]
     
-    model.listPluralName = "Customers"
-    model.syncPluralName = "Customers"
+    model.listPluralName = "Clients"
+    model.syncPluralName = "Clients"
     
     model.attributes(
-      .primaryKey(fields: [customer.id])
+      .primaryKey(fields: [client.id])
     )
     
     model.fields(
-      .field(customer.id, is: .required, ofType: .string),
-      .field(customer.name, is: .required, ofType: .string),
-      .hasMany(customer.Haircuts, is: .optional, ofType: Haircut.self, associatedWith: Haircut.keys.customerID),
-      .field(customer.createdAt, is: .optional, isReadOnly: true, ofType: .dateTime),
-      .field(customer.updatedAt, is: .optional, isReadOnly: true, ofType: .dateTime)
+      .field(client.id, is: .required, ofType: .string),
+      .field(client.name, is: .required, ofType: .string),
+      .hasMany(client.Haircuts, is: .optional, ofType: Haircut.self, associatedWith: Haircut.keys.customerID),
+      .field(client.createdAt, is: .optional, isReadOnly: true, ofType: .dateTime),
+      .field(client.updatedAt, is: .optional, isReadOnly: true, ofType: .dateTime)
     )
     }
 }
 
-extension Customer: ModelIdentifiable {
+extension Client: ModelIdentifiable {
   public typealias IdentifierFormat = ModelIdentifierFormat.Default
   public typealias IdentifierProtocol = DefaultModelIdentifier<Self>
 }

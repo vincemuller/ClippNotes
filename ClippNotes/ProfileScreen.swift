@@ -38,7 +38,7 @@ let columns: [GridItem] = [GridItem(.flexible()),
 struct ProfileScreen: View {
     @EnvironmentObject var viewModel: ViewModel
     
-    @State var selectedCustomer: Customer = Customer(name: "")
+    @State var selectedCustomer: Client = Client(name: "")
     @State private var selectedHairSection: HairSection = .all
     @State private var isDragging: Bool = false
     
@@ -46,9 +46,6 @@ struct ProfileScreen: View {
     @State private var capturedImage: UIImage?
     
     @State private var newHairCutSheetIsPresenting: Bool = false
-    private var selectedHaircut: Haircut {
-        return viewModel.selectedCustomerHaircuts[0]
-    }
 
     
     var body: some View {
@@ -65,7 +62,7 @@ struct ProfileScreen: View {
                             ZStack (alignment: .top) {
                                 UnevenRoundedRectangle(cornerRadii: .init(bottomLeading: 20, bottomTrailing: 20))
                                     .fill(LinearGradient(colors: [Color.clippnotesLightBlue,Color.clippnotesDarkBlue], startPoint: .bottom, endPoint: .top))
-                                    .frame(height: 445)
+                                    .frame(height: 420)
                                 VStack {
                                     HStack {
                                         VStack (alignment: .leading, spacing: 5) {
@@ -211,7 +208,7 @@ struct ProfileScreen: View {
                                         }
                                     }
                                     .padding(.horizontal)
-                                    .padding(.bottom, 7)
+                                    .padding(.bottom, 10)
                                 }
                                 .frame(maxWidth: .infinity)
                             }
@@ -237,39 +234,14 @@ struct ProfileScreen: View {
                                     .fill(LinearGradient(colors: [Color.clippnotesLightBlue,Color.clippnotesVeryLightBlue, Color.clippnotesLightBlue], startPoint: .topLeading, endPoint: .bottomTrailing).opacity(0.5))
                                     .stroke(Color.white.opacity(0.5), lineWidth: 1)
                                     .padding(.horizontal)
-                                switch selectedHairSection {
-                                case .front:
-                                    Text(viewModel.selectedHaircut.decodeNotesJSON().front)
+                                
+                                Text(noteForSection(selectedHairSection))
                                         .font(.system(size: 14))
                                         .foregroundStyle(.white)
+                                        .frame(width: 320, height: geometryReader.size.height * 0.20, alignment: .topLeading)
                                         .padding(.horizontal, 30)
                                         .padding(.vertical, 10)
-                                case .back:
-                                    Text(viewModel.selectedHaircut.decodeNotesJSON().back)
-                                        .font(.system(size: 14))
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 30)
-                                        .padding(.vertical, 10)
-                                case .all:
-                                    Text(viewModel.selectedHaircut.decodeNotesJSON().all ?? "")
-                                        .font(.system(size: 14))
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 30)
-                                        .padding(.vertical, 10)
-                                case .left:
-                                    Text(viewModel.selectedHaircut.decodeNotesJSON().left)
-                                        .font(.system(size: 14))
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 30)
-                                        .padding(.vertical, 10)
-                                case .right:
-                                    Text(viewModel.selectedHaircut.decodeNotesJSON().right)
-                                        .font(.system(size: 14))
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 30)
-                                        .padding(.vertical, 10)
-                                }
-
+                                        .transition(.opacity)
                             }
                             .frame(height: geometryReader.size.height * 0.25)
                             HStack {
@@ -292,6 +264,7 @@ struct ProfileScreen: View {
                                 .padding(.trailing, 25)
                                 .offset(y: 3)
                             }
+                            .padding(.top, 10)
                             ZStack {
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(LinearGradient(colors: [Color.clippnotesLightBlue, Color.clippnotesVeryLightBlue, Color.clippnotesLightBlue], startPoint: .topLeading, endPoint: .bottomTrailing).opacity(0.5))
@@ -326,6 +299,22 @@ struct ProfileScreen: View {
             }
         }
         .sheet(isPresented: $newHairCutSheetIsPresenting) {
+        }
+    }
+    
+    private func noteForSection(_ section: HairSection) -> String {
+        let front = viewModel.haircutNotes.front
+        let back = viewModel.haircutNotes.back
+        let all = viewModel.haircutNotes.all
+        let left = viewModel.haircutNotes.left
+        let right = viewModel.haircutNotes.right
+        
+        switch section {
+        case .front: return front
+        case .back: return back
+        case .left: return left
+        case .right: return right
+        case .all: return all ?? ""
         }
     }
     

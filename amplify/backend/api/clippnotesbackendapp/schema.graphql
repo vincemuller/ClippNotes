@@ -4,12 +4,12 @@ type Haircut @model @auth(rules: [{allow: public}]) {
   stylist: String
   photosByView: AWSJSON
   notesByView: AWSJSON
-  customerID: ID! @index(name: "byCustomer")
+  customerID: ID! @index(name: "byClient")
 }
 
-type Customer @model @auth(rules: [{allow: public}]) {
+type Client @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
-  Haircuts: [Haircut] @hasMany(indexName: "byCustomer", fields: ["id"])
+  Haircuts: [Haircut] @hasMany(indexName: "byClient", fields: ["id"])
 }
  
