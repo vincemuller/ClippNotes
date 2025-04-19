@@ -47,6 +47,7 @@ struct ClientListScreen: View {
                                                 viewModel.selectedCustomer = customer
                                                 Task {
                                                     await viewModel.getCustomerHaircuts()
+                                                    try await viewModel.fetchImageURLs()
                                                 }
                                             }
                                         

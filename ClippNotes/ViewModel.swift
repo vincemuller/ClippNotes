@@ -2,6 +2,17 @@ import Foundation
 import Amplify
 import AWSPluginsCore
 import AWSAPIPlugin
+import AWSS3StoragePlugin
+import AWSCognitoAuthPlugin
+import SwiftUI
+
+
+struct HaircutImage {
+    var front: URL
+    var back: URL
+    var left: URL
+    var right: URL
+}
 
 @MainActor
 class ViewModel: ObservableObject {
@@ -14,20 +25,72 @@ class ViewModel: ObservableObject {
         date: Temporal.DateTime.now(),
         stylist: "",
         photosByView: "",
-        notesByView: "",
+        notes: "",
         customerID: ""
     )
+    @Published var imageDataTest: HaircutImage? = nil
 
     init() {}
 
     func configureAmplify() {
         do {
             try Amplify.add(plugin: AWSAPIPlugin())
+            try Amplify.add(plugin: AWSS3StoragePlugin())
+            try Amplify.add(plugin: AWSCognitoAuthPlugin())
             try Amplify.configure()
             print("Amplify configured!")
         } catch {
             print("Error configuring Amplify: \(error)")
         }
+    }
+    
+    private func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: targetSize)
+        return renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: targetSize))
+        }
+    }
+    
+    func uploadImage(haircutID: String, hairImages: [HairSection:UIImage]) {
+
+        for section in HairSection.allCases {
+            if let image = hairImages[section] {
+                let compressed = resizeImage(image: image, targetSize: CGSize(width: 1024, height: 768))
+                if let imageData = compressed.jpegData(compressionQuality: 0.6) {
+                    let key = "public/\(selectedCustomer.id)\(haircutID)\(section.label)Image.jpg"
+                    Amplify.Storage.uploadData(path: .fromString(key), data: imageData)
+                }
+            }
+        }
+        
+    }
+    
+    
+    func fetchImageURLs() async throws {
+        imageDataTest = nil
+        let result = try await Amplify.Storage.list(path: .fromString("public/\(selectedCustomer.id)"))
+        
+        guard !result.items.isEmpty else { return }
+        
+        let urls: [URL] = try await withThrowingTaskGroup(of: URL.self) { group in
+            for item in result.items {
+                group.addTask {
+                    try await Amplify.Storage.getURL(path: .fromString(item.path))
+                }
+            }
+            
+            var collected: [URL] = []
+            for try await url in group {
+                collected.append(url)
+            }
+            return collected
+        }
+        
+        let sH = urls.filter {$0.absoluteString.contains(selectedHaircut.id)}
+        imageDataTest = HaircutImage(front: sH.first(where: {$0.relativePath.contains("FRONT")}) ?? URL(fileURLWithPath: ""),
+                                     back: sH.first(where: {$0.relativePath.contains("BACK")}) ?? URL(fileURLWithPath: ""),
+                                     left: sH.first(where: {$0.relativePath.contains("LEFT")}) ?? URL(fileURLWithPath: ""),
+                                     right: sH.first(where: {$0.relativePath.contains("RIGHT")}) ?? URL(fileURLWithPath: ""))
     }
 
     func getCustomers() async {
@@ -64,7 +127,7 @@ class ViewModel: ObservableObject {
                 self.selectedCustomerHaircuts = Array(haircuts).sorted {
                     $0.date?.iso8601String ?? "" > $1.date?.iso8601String ?? ""
                 }
-                if let firstHaircut = haircuts.first {
+                if let firstHaircut = selectedCustomerHaircuts.first {
                     self.selectedHaircut = firstHaircut
                 }
                 print("Retrieved \(haircuts.count) haircuts")
@@ -78,20 +141,26 @@ class ViewModel: ObservableObject {
         }
     }
 
-    func createHaircut(customerID: String, haircut: HaircutReferences) async {
+    func createHaircut(notes: String, hairImages: [HairSection:UIImage]) async {
+        let haircutID = UUID().uuidString
+        
+        let imageData = HairViewKeys(frontKey: "public/\(selectedCustomer.id)\(haircutID)FRONTImage.jpg", backKey: "public/\(selectedCustomer.id)\(haircutID)BACKImage.jpg", leftKey: "public/\(selectedCustomer.id)\(haircutID)LEFTImage.jpg", rightKey: "public/\(selectedCustomer.id)\(haircutID)RIGHTImage.jpg")
+        
         let model = Haircut(
+            id: haircutID,
             date: Temporal.DateTime.now(),
             stylist: stylist,
-            photosByView: haircut.getPhotosJson(),
-            notesByView: haircut.getNotesJson(),
-            customerID: customerID
+            photosByView: imageData.getJson(),
+            notes: notes,
+            customerID: selectedCustomer.id
         )
 
         do {
             let result = try await Amplify.API.mutate(request: .create(model))
             switch result {
             case .success(let model):
-                print("Haircut created: \(model)")
+                print("Haircut created: \(model.id)")
+                uploadImage(haircutID: haircutID, hairImages: hairImages)
             case .failure(let error):
                 print("GraphQL mutation failed: \(error)")
             }
@@ -101,4 +170,5 @@ class ViewModel: ObservableObject {
             print("Unexpected error during haircut creation: \(error)")
         }
     }
+    
 }

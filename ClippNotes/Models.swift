@@ -6,35 +6,27 @@
 //
 
 import Foundation
+import SwiftUI
 
 
-struct HairView: Codable {
-    var front: String
-    var back: String
-    var left: String
-    var right: String
-    var all: String?
+struct HairViewKeys: Codable {
+    var frontKey: String
+    var backKey: String
+    var leftKey: String
+    var rightKey: String
 }
 
-class HaircutReferences: Identifiable {
-    var notesByView: HairView
-    var photosByView: HairView
-    
-    init(notesByView: HairView, photosByView: HairView) {
-        self.notesByView = notesByView
-        self.photosByView = photosByView
-    }
-    
-    func getNotesJson() -> String {
+extension HairViewKeys {
+    func getJson() -> String {
         var encodedString: String = ""
         
         let jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = .prettyPrinted
 
         do {
-            let encodeNotes = try jsonEncoder.encode(self.notesByView)
+            let encodePhotos = try jsonEncoder.encode(self)
             
-            encodedString = String(data: encodeNotes, encoding: .utf8)!
+            encodedString = String(data: encodePhotos, encoding: .utf8)!
 
         } catch {
             print(error.localizedDescription)
@@ -42,22 +34,5 @@ class HaircutReferences: Identifiable {
         
         return encodedString
     }
-    
-    func getPhotosJson() -> String {
-        var encodedString: String = ""
-        
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.outputFormatting = .prettyPrinted
 
-        do {
-            let encodeNotes = try jsonEncoder.encode(self.photosByView)
-            
-            encodedString = String(data: encodeNotes, encoding: .utf8)!
-
-        } catch {
-            print(error.localizedDescription)
-        }
-        
-        return encodedString
-    }
 }

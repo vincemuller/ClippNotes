@@ -2,12 +2,12 @@
 import Amplify
 import Foundation
 
-public struct Haircut: Model, Equatable {
+public struct Haircut: Model {
   public let id: String
   public var date: Temporal.DateTime?
   public var stylist: String?
   public var photosByView: String?
-  public var notesByView: String?
+  public var notes: String?
   public var customerID: String
   public var createdAt: Temporal.DateTime?
   public var updatedAt: Temporal.DateTime?
@@ -16,13 +16,13 @@ public struct Haircut: Model, Equatable {
       date: Temporal.DateTime? = nil,
       stylist: String? = nil,
       photosByView: String? = nil,
-      notesByView: String? = nil,
+      notes: String? = nil,
       customerID: String) {
     self.init(id: id,
       date: date,
       stylist: stylist,
       photosByView: photosByView,
-      notesByView: notesByView,
+      notes: notes,
       customerID: customerID,
       createdAt: nil,
       updatedAt: nil)
@@ -31,7 +31,7 @@ public struct Haircut: Model, Equatable {
       date: Temporal.DateTime? = nil,
       stylist: String? = nil,
       photosByView: String? = nil,
-      notesByView: String? = nil,
+      notes: String? = nil,
       customerID: String,
       createdAt: Temporal.DateTime? = nil,
       updatedAt: Temporal.DateTime? = nil) {
@@ -39,27 +39,9 @@ public struct Haircut: Model, Equatable {
       self.date = date
       self.stylist = stylist
       self.photosByView = photosByView
-      self.notesByView = notesByView
+      self.notes = notes
       self.customerID = customerID
       self.createdAt = createdAt
       self.updatedAt = updatedAt
   }
-    
-    func decodeNotesJSON() -> HairView {
-        var decodedNotes: HairView = HairView(front: "", back: "", left: "", right: "", all: "")
-        let jsonDecoder = JSONDecoder()
-        
-        if notesByView != nil {
-            do {
-                decodedNotes = try jsonDecoder.decode(HairView.self, from: Data(self.notesByView?.utf8 ?? "".utf8))
-                print(decodedNotes)
-            } catch {
-                print(error.localizedDescription)
-
-            }
-            return decodedNotes
-        } else {
-            return decodedNotes
-        }
-    }
 }

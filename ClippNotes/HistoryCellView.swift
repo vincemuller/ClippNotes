@@ -27,7 +27,7 @@ struct HistoryCellView: View {
                     Text("Stylist: \(haircut.stylist ?? "")")
                         .font(.system(size: 12))
                         .foregroundStyle(.white)
-                    Text(haircut.decodeNotesJSON().front)
+                    Text(haircut.notes ?? "")
                         .font(.system(size: 14))
                         .foregroundStyle(.white)
                         .lineLimit(2)
@@ -46,5 +46,5 @@ struct HistoryCellView: View {
 }
 
 #Preview {
-    HistoryCellView(haircut: Haircut(date: Temporal.DateTime.now(), stylist: "Stacy Brookes", photosByView: "", notesByView: "", customerID: ""))
+    HistoryCellView(haircut: Haircut(date: Temporal.DateTime.now(), stylist: "Stacy Brookes", photosByView: "", notes: "", customerID: ""))
 }

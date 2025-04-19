@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import Amplify
+
 
 enum HairSection: Identifiable, CaseIterable {
     case front, back, all, left, right
@@ -45,8 +47,11 @@ struct ProfileScreen: View {
     @State private var showCamera = false
     @State private var capturedImage: UIImage?
     
-    @State private var newHairCutSheetIsPresenting: Bool = false
+    @State private var newHairCutSheetIsPresenting: Bool = true
 
+    @State var hairImages: [HairSection:UIImage] = [:]
+    @State var haircutNotes: String = ""
+    @State var newHaircutSelectedHairSection: HairSection = .all
     
     var body: some View {
         GeometryReader { geometryReader in
@@ -78,118 +83,255 @@ struct ProfileScreen: View {
                                         Spacer()
                                     }
                                     TabView(selection: $selectedHairSection) {
-                                        Image("frontImage")
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(height: geometryReader.size.height * 0.42)
-                                            .clipped()
-                                            .mask(RoundedRectangle(cornerRadius: 20))
-                                            .padding(.horizontal)
-                                            .tag(HairSection.front)
-
-                                        Image("backImage")
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(height: geometryReader.size.height * 0.42)
-                                            .clipped()
-                                            .mask(RoundedRectangle(cornerRadius: 20))
-                                            .padding(.horizontal)
-                                            .tag(HairSection.back)
+                                        
+                                        ZStack {
+                                            if let frontImage = viewModel.imageDataTest?.front {
+                                                AsyncImage(url: frontImage) { phase in
+                                                    switch phase {
+                                                    case .empty:
+                                                        ProgressView()
+                                                    case .success(let image):
+                                                        image
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                    case .failure:
+                                                        Text("Failed to load image.")
+                                                    @unknown default:
+                                                        EmptyView()
+                                                    }
+                                                }
+                                            } else {
+                                                Color.gray
+                                                    .overlay(Text("Loading..."))
+                                            }
+                                        }
+                                        .frame(height: geometryReader.size.height * 0.42)
+                                        .clipped()
+                                        .mask(RoundedRectangle(cornerRadius: 20))
+                                        .padding(.horizontal)
+                                        .tag(HairSection.front)
+                                        
+                                        ZStack {
+                                            if let backImage = viewModel.imageDataTest?.back {
+                                                AsyncImage(url: backImage) { phase in
+                                                    switch phase {
+                                                    case .empty:
+                                                        ProgressView()
+                                                    case .success(let image):
+                                                        image
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                    case .failure:
+                                                        Text("Failed to load image.")
+                                                    @unknown default:
+                                                        EmptyView()
+                                                    }
+                                                }
+                                            } else {
+                                                Color.gray
+                                                    .overlay(Text("Loading..."))
+                                            }
+                                        }
+                                        .frame(height: geometryReader.size.height * 0.42)
+                                        .clipped()
+                                        .mask(RoundedRectangle(cornerRadius: 20))
+                                        .padding(.horizontal)
+                                        .tag(HairSection.back)
                                         
                                         VStack(spacing: 0) {
                                             HStack(spacing: 0) {
-                                                Image("frontImage")
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(height: geometryReader.size.height * 0.21)
-                                                    .clipped()
-                                                    .mask {
-                                                        UnevenRoundedRectangle(topLeadingRadius: 20)
-                                                    }
-                                                    .onTapGesture {
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            selectedHairSection = .front
+                                                ZStack {
+                                                    if let frontImage = viewModel.imageDataTest?.front {
+                                                        AsyncImage(url: frontImage) { phase in
+                                                            switch phase {
+                                                            case .empty:
+                                                                ProgressView()
+                                                            case .success(let image):
+                                                                image
+                                                                    .resizable()
+                                                                    .scaledToFill()
+                                                            case .failure:
+                                                                Text("Failed to load image.")
+                                                            @unknown default:
+                                                                EmptyView()
+                                                            }
                                                         }
+                                                    } else {
+                                                        Color.gray
+                                                            .overlay(Text("Loading..."))
                                                     }
-                                                Image("leftImage")
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(height: geometryReader.size.height * 0.21)
-                                                    .clipped()
-                                                    .mask {
-                                                        UnevenRoundedRectangle(topTrailingRadius: 20)
+                                                }
+                                                .frame(height: geometryReader.size.height * 0.21)
+                                                .clipped()
+                                                .mask {
+                                                    UnevenRoundedRectangle(topLeadingRadius: 20)
+                                                }
+                                                .onTapGesture {
+                                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                                        selectedHairSection = .front
                                                     }
-                                                    .onTapGesture {
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            selectedHairSection = .left
+                                                }
+                                                
+                                                ZStack {
+                                                    if let leftImage = viewModel.imageDataTest?.left {
+                                                        AsyncImage(url: leftImage) { phase in
+                                                            switch phase {
+                                                            case .empty:
+                                                                ProgressView()
+                                                            case .success(let image):
+                                                                image
+                                                                    .resizable()
+                                                                    .scaledToFill()
+                                                            case .failure:
+                                                                Text("Failed to load image.")
+                                                            @unknown default:
+                                                                EmptyView()
+                                                            }
                                                         }
+                                                    } else {
+                                                        Color.gray
+                                                            .overlay(Text("Loading..."))
                                                     }
+                                                }
+                                                .frame(height: geometryReader.size.height * 0.21)
+                                                .clipped()
+                                                .mask {
+                                                    UnevenRoundedRectangle(topTrailingRadius: 20)
+                                                }
+                                                .onTapGesture {
+                                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                                        selectedHairSection = .left
+                                                    }
+                                                }
                                             }
                                             
                                             HStack(spacing: 0) {
-                                                Image("backImage")
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(height: geometryReader.size.height * 0.21)
-                                                    .clipped()
-                                                    .mask {
-                                                        UnevenRoundedRectangle(bottomLeadingRadius: 20)
-                                                    }
-                                                    .onTapGesture {
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            selectedHairSection = .back
+                                                ZStack {
+                                                    if let backImage = viewModel.imageDataTest?.back {
+                                                        AsyncImage(url: backImage) { phase in
+                                                            switch phase {
+                                                            case .empty:
+                                                                ProgressView()
+                                                            case .success(let image):
+                                                                image
+                                                                    .resizable()
+                                                                    .scaledToFill()
+                                                            case .failure:
+                                                                Text("Failed to load image.")
+                                                            @unknown default:
+                                                                EmptyView()
+                                                            }
                                                         }
+                                                    } else {
+                                                        Color.gray
+                                                            .overlay(Text("Loading..."))
                                                     }
+                                                }
+                                                .frame(height: geometryReader.size.height * 0.21)
+                                                .clipped()
+                                                .mask {
+                                                    UnevenRoundedRectangle(bottomLeadingRadius: 20)
+                                                }
+                                                .onTapGesture {
+                                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                                        selectedHairSection = .back
+                                                    }
+                                                }
                                                 
-                                                Image("rightImage")
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(height: geometryReader.size.height * 0.21)
-                                                    .clipped()
-                                                    .mask {
-                                                        UnevenRoundedRectangle(bottomTrailingRadius: 20)
-                                                    }
-                                                    .onTapGesture {
-                                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                                            selectedHairSection = .right
+                                                ZStack {
+                                                    if let rightImage = viewModel.imageDataTest?.right {
+                                                        AsyncImage(url: rightImage) { phase in
+                                                            switch phase {
+                                                            case .empty:
+                                                                ProgressView()
+                                                            case .success(let image):
+                                                                image
+                                                                    .resizable()
+                                                                    .scaledToFill()
+                                                            case .failure:
+                                                                Text("Failed to load image.")
+                                                            @unknown default:
+                                                                EmptyView()
+                                                            }
                                                         }
+                                                    } else {
+                                                        Color.gray
+                                                            .overlay(Text("Loading..."))
                                                     }
+                                                }
+                                                .frame(height: geometryReader.size.height * 0.21)
+                                                .clipped()
+                                                .mask {
+                                                    UnevenRoundedRectangle(bottomTrailingRadius: 20)
+                                                }
+                                                .onTapGesture {
+                                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                                        selectedHairSection = .right
+                                                    }
+                                                }
                                             }
                                         }
                                         .tag(HairSection.all)
                                         .padding(.horizontal)
                                         
-                                        if let image = capturedImage {
-                                            Image(uiImage: image)
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(height: geometryReader.size.height * 0.42)
-                                                .clipped()
-                                                .mask(RoundedRectangle(cornerRadius: 20))
-                                                .padding(.horizontal)
-                                                .tag(HairSection.left)
-                                        } else {
-                                            Image("leftImage")
-                                                .resizable()
-                                                .scaledToFill()
-                                                .frame(height: geometryReader.size.height * 0.42)
-                                                .clipped()
-                                                .mask(RoundedRectangle(cornerRadius: 20))
-                                                .padding(.horizontal)
-                                                .tag(HairSection.left)
+                                        ZStack {
+                                            if let leftImage = viewModel.imageDataTest?.left {
+                                                AsyncImage(url: leftImage) { phase in
+                                                    switch phase {
+                                                    case .empty:
+                                                        ProgressView()
+                                                    case .success(let image):
+                                                        image
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                    case .failure(let error):
+                                                        Text("Failed to load image. \(error.localizedDescription)")
+                                                    @unknown default:
+                                                        EmptyView()
+                                                    }
+                                                }
+                                            } else {
+                                                Color.gray
+                                                    .overlay(Text("Loading..."))
+                                            }
                                         }
+                                        .frame(height: geometryReader.size.height * 0.42)
+                                        .clipped()
+                                        .mask(RoundedRectangle(cornerRadius: 20))
+                                        .padding(.horizontal)
+                                        .tag(HairSection.left)
                                         
-                                        Image("rightImage")
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(height: geometryReader.size.height * 0.42)
-                                            .clipped()
-                                            .mask(RoundedRectangle(cornerRadius: 20))
-                                            .padding(.horizontal)
-                                            .tag(HairSection.right)
+                                        ZStack {
+                                            if let rightImage = viewModel.imageDataTest?.right {
+                                                AsyncImage(url: rightImage) { phase in
+                                                    switch phase {
+                                                    case .empty:
+                                                        ProgressView()
+                                                    case .success(let image):
+                                                        image
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                    case .failure:
+                                                        Text("Failed to load image.")
+                                                    @unknown default:
+                                                        EmptyView()
+                                                    }
+                                                }
+                                            } else {
+                                                Color.gray
+                                                    .overlay(Text("Loading..."))
+                                            }
+                                        }
+                                        .frame(height: geometryReader.size.height * 0.42)
+                                        .clipped()
+                                        .mask(RoundedRectangle(cornerRadius: 20))
+                                        .padding(.horizontal)
+                                        .tag(HairSection.right)
                                     }
+                                    .id(viewModel.selectedHaircut.id)
                                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                                     .animation(.easeInOut(duration: 0.3), value: selectedHairSection)
+                                    
                                     LazyVGrid(columns: columns) {
                                         ForEach(HairSection.allCases, id: \.self) {section in
                                             Button {
@@ -213,11 +355,10 @@ struct ProfileScreen: View {
                                 .frame(maxWidth: .infinity)
                             }
                             HStack {
-                                Text("\(selectedHairSection.label.capitalized) Notes")
+                                Text("Style Notes")
                                     .font(Font.custom("anta-regular", size: 20))
                                     .foregroundStyle(Color.clippnotesYellow)
                                     .padding(.leading, 20)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 Spacer()
                                 Button {
                                     print("edit notes function")
@@ -235,30 +376,13 @@ struct ProfileScreen: View {
                                     .stroke(Color.white.opacity(0.5), lineWidth: 1)
                                     .padding(.horizontal)
                                 
-                                let notes = viewModel.selectedHaircut.decodeNotesJSON()
-
-                                let noteText: String = {
-                                    switch selectedHairSection {
-                                    case .front:
-                                        return notes.front
-                                    case .back:
-                                        return notes.back
-                                    case .left:
-                                        return notes.left
-                                    case .right:
-                                        return notes.right
-                                    case .all:
-                                        return notes.all ?? ""
-                                    }
-                                }()
-                                
-                                Text(noteText)
-                                        .font(.system(size: 14))
-                                        .foregroundStyle(.white)
-                                        .frame(width: 320, height: geometryReader.size.height * 0.20, alignment: .topLeading)
-                                        .padding(.horizontal, 30)
-                                        .padding(.vertical, 10)
-                                        .transition(.opacity)
+                                Text(viewModel.selectedHaircut.notes ?? "")
+                                    .font(.system(size: 14))
+                                    .foregroundStyle(.white)
+                                    .frame(width: 320, height: geometryReader.size.height * 0.20, alignment: .topLeading)
+                                    .padding(.horizontal, 30)
+                                    .padding(.vertical, 10)
+                                    .transition(.opacity)
                             }
                             .frame(height: geometryReader.size.height * 0.25)
                             HStack {
@@ -270,10 +394,6 @@ struct ProfileScreen: View {
                                 Spacer()
                                 Button {
                                     newHairCutSheetIsPresenting = true
-                                    Task {
-                                        await viewModel.createHaircut(customerID: viewModel.selectedCustomer.id, haircut: HaircutReferences(notesByView: HairView(front: "Trimmed 1 inch off the bangs and softened the corners for a more rounded look. Light layering around the face to frame features.", back: "Tapered the nape for a cleaner neckline. Layers added for movement; maintained shoulder length overall.", left: "Blended the left sideburn area and trimmed around the ear. Matched the angle of the right side.", right: "Trimmed right side evenly with slight texturizing near the temple. Checked for symmetry with left side.", all: "New all notes text!"), photosByView: HairView(front: "frontImage", back: "backImage", left: "leftImage", right: "rightImage")))
-                                        await viewModel.getCustomerHaircuts()
-                                    }
                                 } label: {
                                     Image(systemName: "plus")
                                         .font(.system(size: 18, weight: .bold))
@@ -287,7 +407,7 @@ struct ProfileScreen: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(LinearGradient(colors: [Color.clippnotesLightBlue, Color.clippnotesVeryLightBlue, Color.clippnotesLightBlue], startPoint: .topLeading, endPoint: .bottomTrailing).opacity(0.5))
                                     .stroke(Color.white.opacity(0.5), lineWidth: 1)
-
+                                
                                 ScrollView {
                                     VStack (spacing: 0) {
                                         ForEach(viewModel.selectedCustomerHaircuts, id: \.id) { haircut in
@@ -299,6 +419,10 @@ struct ProfileScreen: View {
                                                         .onTapGesture {
                                                             viewModel.selectedHaircut = haircut
                                                             selectedHairSection = .all
+                                                            viewModel.imageDataTest = nil
+                                                            Task {
+                                                                try await viewModel.fetchImageURLs()
+                                                            }
                                                         }
                                                 }
                                             }
@@ -306,18 +430,218 @@ struct ProfileScreen: View {
                                     }
                                 }
                                 .frame(height: 250)
-                                .mask {
-                                    RoundedRectangle(cornerRadius: 12)
-                                }
                             }
                             .padding(.horizontal)
-                            
                         }
                     }
                 }
             }
         }
         .sheet(isPresented: $newHairCutSheetIsPresenting) {
+            
+            let height: CGFloat = 793
+            
+            ZStack {
+                Color.clippnotesDarkBlue
+            ScrollView {
+                    VStack (spacing: 0) {
+                        Text("Log New Haircut")
+                            .font(Font.custom("anta-regular", size: 25))
+                            .foregroundStyle(Color.clippnotesYellow)
+                            .padding(.vertical)
+                        HStack(spacing: 0) {
+                            ZStack {
+                                Rectangle()
+                                    .fill(Color.clippnotesLightBlue)
+                                    .clipped()
+                                    .mask {
+                                        UnevenRoundedRectangle(topLeadingRadius: 20)
+                                    }
+                                Button {
+                                    showCamera = true
+                                    newHaircutSelectedHairSection = .front
+                                } label: {
+                                    if let frontImage = hairImages[HairSection.front] {
+                                        Image(uiImage: frontImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(height: height * 0.21)
+                                            .mask {
+                                                UnevenRoundedRectangle(topLeadingRadius: 20)
+                                            }
+                                    } else {
+                                        VStack {
+                                            Image(systemName: "camera")
+                                                .font(.system(size: 40))
+                                                .foregroundStyle(Color.white.opacity(0.3))
+                                            Text("Front")
+                                                .font(Font.custom("anta-regular", size: 20))
+                                                .foregroundStyle(Color.white.opacity(0.3))
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(height: height * 0.21)
+                            .padding(2)
+                            
+                            ZStack {
+                                Rectangle()
+                                    .fill(Color.clippnotesLightBlue)
+                                    .clipped()
+                                    .mask {
+                                        UnevenRoundedRectangle(topTrailingRadius: 20)
+                                    }
+                                Button {
+                                    showCamera = true
+                                    newHaircutSelectedHairSection = .left
+                                } label: {
+                                    if let leftImage = hairImages[HairSection.left] {
+                                        Image(uiImage: leftImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(height: height * 0.21)
+                                            .mask {
+                                                UnevenRoundedRectangle(topTrailingRadius: 20)
+                                            }
+                                    } else {
+                                        VStack {
+                                            Image(systemName: "camera")
+                                                .font(.system(size: 40))
+                                                .foregroundStyle(Color.white.opacity(0.3))
+                                            Text("Left")
+                                                .font(Font.custom("anta-regular", size: 20))
+                                                .foregroundStyle(Color.white.opacity(0.3))
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(height: height * 0.21)
+                            .padding(2)
+                        }
+                        HStack(spacing: 0) {
+                            ZStack {
+                                Rectangle()
+                                    .fill(Color.clippnotesLightBlue)
+                                    .clipped()
+                                    .mask {
+                                        UnevenRoundedRectangle(bottomLeadingRadius: 20)
+                                    }
+                                Button {
+                                    showCamera = true
+                                    newHaircutSelectedHairSection = .back
+                                } label: {
+                                    if let backImage = hairImages[HairSection.back] {
+                                        Image(uiImage: backImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(height: height * 0.21)
+                                            .mask {
+                                                UnevenRoundedRectangle(bottomLeadingRadius: 20)
+                                            }
+                                    } else {
+                                        VStack {
+                                            Image(systemName: "camera")
+                                                .font(.system(size: 40))
+                                                .foregroundStyle(Color.white.opacity(0.3))
+                                            Text("Back")
+                                                .font(Font.custom("anta-regular", size: 20))
+                                                .foregroundStyle(Color.white.opacity(0.3))
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(height: height * 0.21)
+                            .padding(2)
+                            
+                            ZStack {
+                                Rectangle()
+                                    .fill(Color.clippnotesLightBlue)
+                                    .clipped()
+                                    .mask {
+                                        UnevenRoundedRectangle(bottomTrailingRadius: 20)
+                                    }
+                                Button {
+                                    showCamera = true
+                                    newHaircutSelectedHairSection = .right
+                                } label: {
+                                    if let rightImage = hairImages[HairSection.right] {
+                                        Image(uiImage: rightImage)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(height: height * 0.21)
+                                            .mask {
+                                                UnevenRoundedRectangle(bottomTrailingRadius: 20)
+                                            }
+                                    } else {
+                                        VStack {
+                                            Image(systemName: "camera")
+                                                .font(.system(size: 40))
+                                                .foregroundStyle(Color.white.opacity(0.3))
+                                            Text("Right")
+                                                .font(Font.custom("anta-regular", size: 20))
+                                                .foregroundStyle(Color.white.opacity(0.3))
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(height: height * 0.21)
+                            .padding(2)
+                        }
+                        HStack {
+                            Text("Stylist Notes")
+                                .font(Font.custom("anta-regular", size: 20))
+                                .foregroundStyle(Color.clippnotesYellow)
+                            Spacer()
+                        }
+                        .padding(.vertical)
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(LinearGradient(colors: [Color.clippnotesLightBlue,Color.clippnotesVeryLightBlue, Color.clippnotesLightBlue], startPoint: .topLeading, endPoint: .bottomTrailing).opacity(0.5))
+                                .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                            ZStack(alignment: .topLeading) {
+                                 if haircutNotes.isEmpty {
+                                     Text("Enter notes here...")
+                                         .font(.system(size: 16))
+                                         .foregroundColor(.white.opacity(0.5))
+                                         .padding()
+                                 }
+
+                                 TextEditor(text: $haircutNotes)
+                                    .font(.system(size: 16))
+                                    .foregroundColor(.white)
+                                    .scrollContentBackground(.hidden)
+                                    .padding(10)
+                             }
+                             .frame(minHeight: 180, alignment: .topLeading)
+                        }
+                        .frame(height: 200)
+                        Button {
+                            Task {
+                                await viewModel.createHaircut(notes: haircutNotes, hairImages: hairImages)
+                            }
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.green)
+                                    .frame(height: 50)
+                                Text("Save Haircut")
+                                    .font(.system(size: 20))
+                                    .foregroundStyle(Color.white)
+                            }
+                        }
+                        .padding(.top, 30)
+                        
+                    }
+                    .padding()
+                }
+            }
+            .ignoresSafeArea()
+            .sheet(isPresented: $showCamera) {
+                CameraView { image in
+                    hairImages[newHaircutSelectedHairSection] = image
+                }
+                .ignoresSafeArea()
+            }
         }
     }
     
@@ -332,6 +656,7 @@ struct ProfileScreen: View {
         guard let index = all.firstIndex(of: current) else { return .all }
         return all[(index - 1 + all.count) % all.count]
     }
+
 }
 
 #Preview {
@@ -347,8 +672,11 @@ struct ProfileScreen: View {
 //        Image(uiImage: image)
 //            .resizable()
 //            .scaledToFit()
+//            .onAppear {
+//                print(image)
+//            }
 //    }
-//
+//    
 //    Button("Take Photo") {
 //        showCamera = true
 //    }

@@ -21,6 +21,7 @@ struct ClippNotesApp: App {
                     viewModel.configureAmplify()
                     Task {
                         await viewModel.getCustomers()
+                        try await viewModel.fetchImageURLs()
                     }
                 }
         }
