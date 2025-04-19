@@ -33,7 +33,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		EB4ACB3C2DA742150031D35E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		EB4ACB3C2DA742150031D35E /* Exceptions for "ClippNotes" folder in "ClippNotes" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -46,7 +46,7 @@
 		EB4ACB2A2DA576ED0031D35E /* ClippNotes */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				EB4ACB3C2DA742150031D35E /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
+				EB4ACB3C2DA742150031D35E /* Exceptions for "ClippNotes" folder in "ClippNotes" target */,
 			);
 			path = ClippNotes;
 			sourceTree = "<group>";

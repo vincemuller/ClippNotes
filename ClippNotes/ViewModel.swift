@@ -8,10 +8,10 @@ import SwiftUI
 
 
 struct HaircutImage {
-    var front: URL
-    var back: URL
-    var left: URL
-    var right: URL
+    var front: URL?
+    var back: URL?
+    var left: URL?
+    var right: URL?
 }
 
 @MainActor
@@ -44,18 +44,32 @@ class ViewModel: ObservableObject {
         }
     }
     
-    private func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
-        let renderer = UIGraphicsImageRenderer(size: targetSize)
+    private func resizeImage(image: UIImage, maxDimension: CGFloat) -> UIImage {
+        let size = image.size
+
+        let aspectRatio = size.width / size.height
+
+        var newSize: CGSize
+        if aspectRatio > 1 {
+            // Landscape
+            newSize = CGSize(width: maxDimension, height: maxDimension / aspectRatio)
+        } else {
+            // Portrait or square
+            newSize = CGSize(width: maxDimension * aspectRatio, height: maxDimension)
+        }
+
+        let renderer = UIGraphicsImageRenderer(size: newSize)
         return renderer.image { _ in
-            image.draw(in: CGRect(origin: .zero, size: targetSize))
+            image.draw(in: CGRect(origin: .zero, size: newSize))
         }
     }
+    
     
     func uploadImage(haircutID: String, hairImages: [HairSection:UIImage]) {
 
         for section in HairSection.allCases {
             if let image = hairImages[section] {
-                let compressed = resizeImage(image: image, targetSize: CGSize(width: 1024, height: 768))
+                let compressed = resizeImage(image: image, maxDimension: 1024)
                 if let imageData = compressed.jpegData(compressionQuality: 0.6) {
                     let key = "public/\(selectedCustomer.id)\(haircutID)\(section.label)Image.jpg"
                     Amplify.Storage.uploadData(path: .fromString(key), data: imageData)
@@ -87,10 +101,10 @@ class ViewModel: ObservableObject {
         }
         
         let sH = urls.filter {$0.absoluteString.contains(selectedHaircut.id)}
-        imageDataTest = HaircutImage(front: sH.first(where: {$0.relativePath.contains("FRONT")}) ?? URL(fileURLWithPath: ""),
-                                     back: sH.first(where: {$0.relativePath.contains("BACK")}) ?? URL(fileURLWithPath: ""),
-                                     left: sH.first(where: {$0.relativePath.contains("LEFT")}) ?? URL(fileURLWithPath: ""),
-                                     right: sH.first(where: {$0.relativePath.contains("RIGHT")}) ?? URL(fileURLWithPath: ""))
+        imageDataTest = HaircutImage(front: sH.first(where: {$0.relativePath.contains("FRONT")}),
+                                     back: sH.first(where: {$0.relativePath.contains("BACK")}),
+                                     left: sH.first(where: {$0.relativePath.contains("LEFT")}),
+                                     right: sH.first(where: {$0.relativePath.contains("RIGHT")}))
     }
 
     func getCustomers() async {

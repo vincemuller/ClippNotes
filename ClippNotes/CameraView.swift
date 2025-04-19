@@ -53,7 +53,7 @@ struct CameraView: UIViewControllerRepresentable {
 
             NSLayoutConstraint.activate([
                 ghostFrame.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
-                ghostFrame.centerYAnchor.constraint(equalTo: overlay.centerYAnchor),
+                ghostFrame.centerYAnchor.constraint(equalTo: overlay.centerYAnchor, constant: -50),
                 ghostFrame.widthAnchor.constraint(equalTo: overlay.widthAnchor, multiplier: 0.8),
                 ghostFrame.heightAnchor.constraint(equalTo: overlay.heightAnchor, multiplier: 0.4)
             ])
