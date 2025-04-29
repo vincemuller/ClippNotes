@@ -9,25 +9,6 @@ import SwiftUI
 import Amplify
 
 
-enum HairSection: Identifiable, CaseIterable {
-    case front, back, all, left, right
-    var id: Self { self }
-    var label: String {
-        switch self {
-        case .front:
-            return "FRONT"
-        case .back:
-            return "BACK"
-        case .all:
-            return "ALL"
-        case .left:
-            return "LEFT"
-        case .right:
-            return "RIGHT"
-        }
-    }
-}
-
 let columns: [GridItem] = [GridItem(.flexible()),
                            GridItem(.flexible()),
                            GridItem(.flexible()),
@@ -39,26 +20,18 @@ let columns: [GridItem] = [GridItem(.flexible()),
 
 struct ProfileScreen: View {
     @EnvironmentObject var viewModel: ViewModel
-    @Environment(\.presentationMode) var presentationMode
     
-    @State var selectedCustomer: Client = Client(name: "")
     @State private var selectedHairSection: HairSection = .all
     @State private var isDragging: Bool = false
-    
     @State private var showCamera = false
     @State private var capturedImage: UIImage?
-    
     @State private var newHairCutSheetIsPresenting: Bool = false
-
-    @State var hairImages: [HairSection:UIImage] = [:]
-    @State var haircutNotes: String = ""
-    @State var newHaircutSelectedHairSection: HairSection = .all
+    
     
     var body: some View {
         GeometryReader { geometryReader in
             ZStack {
-                Color.clippnotesDarkBlue
-                    .ignoresSafeArea()
+                BackgroundView()
                 VStack (spacing: 15) {
                     Text("ClippNotes")
                         .font(Font.custom("anta-regular", size: 16))
@@ -70,279 +43,20 @@ struct ProfileScreen: View {
                                     .fill(LinearGradient(colors: [Color.clippnotesLightBlue,Color.clippnotesDarkBlue], startPoint: .bottom, endPoint: .top))
                                     .frame(height: 420)
                                 VStack {
-                                    HStack {
-                                        VStack (alignment: .leading, spacing: 5) {
-                                            Text(viewModel.selectedCustomer.name)
-                                                .font(Font.custom("anta-regular", size: 25))
-                                                .foregroundStyle(Color.white)
-                                                .padding(.leading, 20)
-                                            Text("Last haircut: 90 days ago")
-                                                .font(.system(size: 14))
-                                                .foregroundStyle(Color.clippnotesYellow.opacity(0.5))
-                                                .padding(.leading, 20)
-                                        }
-                                        Spacer()
-                                    }
+                                    
+                                    CustomerHeaderView(customerName: viewModel.selectedCustomer.name, days: viewModel.daysSinceLastHaircut)
+                                    
                                     TabView(selection: $selectedHairSection) {
                                         
-                                        ZStack {
-                                            if let frontImage = viewModel.imageDataTest?.front {
-                                                AsyncImage(url: frontImage) { phase in
-                                                    switch phase {
-                                                    case .empty:
-                                                        ProgressView()
-                                                    case .success(let image):
-                                                        image
-                                                            .resizable()
-                                                            .scaledToFill()
-                                                            .clipped()
-                                                            .frame(height: geometryReader.size.height * 0.42)
-                                                    case .failure:
-                                                        Text("Failed to load image.")
-                                                    @unknown default:
-                                                        EmptyView()
-                                                    }
-                                                }
-                                            } else {
-                                                Color.gray
-                                                    .overlay(Text("Loading..."))
-                                            }
-                                        }
-                                        .frame(height: geometryReader.size.height * 0.42)
-                                        .clipped()
-                                        .mask(RoundedRectangle(cornerRadius: 20))
-                                        .padding(.horizontal)
-                                        .tag(HairSection.front)
+                                        LargeImageTabView(downloadedImage: viewModel.haircutUIImages?.front, height: geometryReader.size.height, hairSection: HairSection.front)
                                         
-                                        ZStack {
-                                            if let backImage = viewModel.imageDataTest?.back {
-                                                AsyncImage(url: backImage) { phase in
-                                                    switch phase {
-                                                    case .empty:
-                                                        ProgressView()
-                                                    case .success(let image):
-                                                        image
-                                                            .resizable()
-                                                            .scaledToFill()
-                                                            .frame(height: geometryReader.size.height * 0.42)
-                                                            .clipped()
-                                                    case .failure:
-                                                        Text("Failed to load image.")
-                                                    @unknown default:
-                                                        EmptyView()
-                                                    }
-                                                }
-                                            } else {
-                                                Color.gray
-                                                    .overlay(Text("Loading..."))
-                                            }
-                                        }
-                                        .frame(height: geometryReader.size.height * 0.42)
-                                        .mask(RoundedRectangle(cornerRadius: 20))
-                                        .padding(.horizontal)
-                                        .tag(HairSection.back)
+                                        LargeImageTabView(downloadedImage: viewModel.haircutUIImages?.back, height: geometryReader.size.height, hairSection: HairSection.back)
                                         
-                                        VStack(spacing: 0) {
-                                            HStack(spacing: 0) {
-                                                ZStack {
-                                                    if let frontImage = viewModel.imageDataTest?.front {
-                                                        AsyncImage(url: frontImage) { phase in
-                                                            switch phase {
-                                                            case .empty:
-                                                                ProgressView()
-                                                            case .success(let image):
-                                                                image
-                                                                    .resizable()
-                                                                    .scaledToFill()
-                                                                    .clipped()
-                                                                    .frame(height: geometryReader.size.height * 0.21)
-                                                            case .failure:
-                                                                Text("Failed to load image.")
-                                                            @unknown default:
-                                                                EmptyView()
-                                                            }
-                                                        }
-                                                    } else {
-                                                        Color.gray
-                                                            .overlay(Text("Loading..."))
-                                                    }
-                                                }
-                                                .frame(height: geometryReader.size.height * 0.21)
-                                                .clipped()
-                                                .mask {
-                                                    UnevenRoundedRectangle(topLeadingRadius: 20)
-                                                }
-                                                .onTapGesture {
-                                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                                        selectedHairSection = .front
-                                                    }
-                                                }
-                                                
-                                                ZStack {
-                                                    if let leftImage = viewModel.imageDataTest?.left {
-                                                        AsyncImage(url: leftImage) { phase in
-                                                            switch phase {
-                                                            case .empty:
-                                                                ProgressView()
-                                                            case .success(let image):
-                                                                image
-                                                                    .resizable()
-                                                                    .scaledToFill()
-                                                                    .clipped()
-                                                                    .frame(height: geometryReader.size.height * 0.21)
-                                                            case .failure:
-                                                                Text("Failed to load image.")
-                                                            @unknown default:
-                                                                EmptyView()
-                                                            }
-                                                        }
-                                                    } else {
-                                                        Color.gray
-                                                            .overlay(Text("Loading..."))
-                                                    }
-                                                }
-                                                .frame(height: geometryReader.size.height * 0.21)
-                                                .clipped()
-                                                .mask {
-                                                    UnevenRoundedRectangle(topTrailingRadius: 20)
-                                                }
-                                                .onTapGesture {
-                                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                                        selectedHairSection = .left
-                                                    }
-                                                }
-                                            }
-                                            
-                                            HStack(spacing: 0) {
-                                                ZStack {
-                                                    if let backImage = viewModel.imageDataTest?.back {
-                                                        AsyncImage(url: backImage) { phase in
-                                                            switch phase {
-                                                            case .empty:
-                                                                ProgressView()
-                                                            case .success(let image):
-                                                                image
-                                                                    .resizable()
-                                                                    .scaledToFill()
-                                                                    .clipped()
-                                                                    .frame(height: geometryReader.size.height * 0.21)
-                                                            case .failure:
-                                                                Text("Failed to load image.")
-                                                            @unknown default:
-                                                                EmptyView()
-                                                            }
-                                                        }
-                                                    } else {
-                                                        Color.gray
-                                                            .overlay(Text("Loading..."))
-                                                    }
-                                                }
-                                                .frame(height: geometryReader.size.height * 0.21)
-                                                .clipped()
-                                                .mask {
-                                                    UnevenRoundedRectangle(bottomLeadingRadius: 20)
-                                                }
-                                                .onTapGesture {
-                                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                                        selectedHairSection = .back
-                                                    }
-                                                }
-                                                
-                                                ZStack {
-                                                    if let rightImage = viewModel.imageDataTest?.right {
-                                                        AsyncImage(url: rightImage) { phase in
-                                                            switch phase {
-                                                            case .empty:
-                                                                ProgressView()
-                                                            case .success(let image):
-                                                                image
-                                                                    .resizable()
-                                                                    .scaledToFill()
-                                                                    .clipped()
-                                                                    .frame(height: geometryReader.size.height * 0.21)
-                                                            case .failure:
-                                                                Text("Failed to load image.")
-                                                            @unknown default:
-                                                                EmptyView()
-                                                            }
-                                                        }
-                                                    } else {
-                                                        Color.gray
-                                                            .overlay(Text("Loading..."))
-                                                    }
-                                                }
-                                                .frame(height: geometryReader.size.height * 0.21)
-                                                .clipped()
-                                                .mask {
-                                                    UnevenRoundedRectangle(bottomTrailingRadius: 20)
-                                                }
-                                                .onTapGesture {
-                                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                                        selectedHairSection = .right
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        .tag(HairSection.all)
-                                        .padding(.horizontal)
+                                        GridImageTabView(selectedHairSection: $selectedHairSection, haircutImages: viewModel.haircutUIImages, height: geometryReader.size.height)
                                         
-                                        ZStack {
-                                            if let leftImage = viewModel.imageDataTest?.left {
-                                                AsyncImage(url: leftImage) { phase in
-                                                    switch phase {
-                                                    case .empty:
-                                                        ProgressView()
-                                                    case .success(let image):
-                                                        image
-                                                            .resizable()
-                                                            .scaledToFill()
-                                                            .clipped()
-                                                            .frame(height: geometryReader.size.height * 0.42)
-                                                    case .failure(let error):
-                                                        Text("Failed to load image. \(error.localizedDescription)")
-                                                    @unknown default:
-                                                        EmptyView()
-                                                    }
-                                                }
-                                            } else {
-                                                Color.gray
-                                                    .overlay(Text("Loading..."))
-                                            }
-                                        }
-                                        .frame(height: geometryReader.size.height * 0.42)
-                                        .clipped()
-                                        .mask(RoundedRectangle(cornerRadius: 20))
-                                        .padding(.horizontal)
-                                        .tag(HairSection.left)
+                                        LargeImageTabView(downloadedImage: viewModel.haircutUIImages?.left, height: geometryReader.size.height, hairSection: HairSection.left)
                                         
-                                        ZStack {
-                                            if let rightImage = viewModel.imageDataTest?.right {
-                                                AsyncImage(url: rightImage) { phase in
-                                                    switch phase {
-                                                    case .empty:
-                                                        ProgressView()
-                                                    case .success(let image):
-                                                        image
-                                                            .resizable()
-                                                            .scaledToFill()
-                                                            .clipped()
-                                                            .frame(height: geometryReader.size.height * 0.42)
-                                                    case .failure:
-                                                        Text("Failed to load image.")
-                                                    @unknown default:
-                                                        EmptyView()
-                                                    }
-                                                }
-                                            } else {
-                                                Color.gray
-                                                    .overlay(Text("Loading..."))
-                                            }
-                                        }
-                                        .frame(height: geometryReader.size.height * 0.42)
-                                        .clipped()
-                                        .mask(RoundedRectangle(cornerRadius: 20))
-                                        .padding(.horizontal)
-                                        .tag(HairSection.right)
+                                        LargeImageTabView(downloadedImage: viewModel.haircutUIImages?.right, height: geometryReader.size.height, hairSection: HairSection.right)
                                     }
                                     .id(viewModel.selectedHaircut.id)
                                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -431,13 +145,12 @@ struct ProfileScreen: View {
                                                 haircut.id == viewModel.selectedHaircut.id ?
                                                 Color.clippnotesVeryLightBlue : Color.clear
                                                 VStack {
-                                                    HistoryCellView(haircut: haircut)
+                                                    HistoryCellView(haircut: haircut, imageURL: viewModel.haircutThumbnails[haircut.id])
                                                         .onTapGesture {
                                                             viewModel.selectedHaircut = haircut
                                                             selectedHairSection = .all
-                                                            viewModel.imageDataTest = nil
                                                             Task {
-                                                                try await viewModel.fetchImageURLs()
+                                                                try await viewModel.fetchHaircutImagesForSelectedHaircut()
                                                             }
                                                         }
                                                 }
@@ -446,23 +159,23 @@ struct ProfileScreen: View {
                                     }
                                 }
                                 .frame(height: 250)
+                                .mask {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .padding(0.5)
+                                }
                             }
                             .padding(.horizontal)
                         }
                     }
                 }
             }
+            .onAppear {
+                print("Width: \(geometryReader.size.width.description)")
+                print("Height: \(geometryReader.size.height.description)")
+            }
         }
         .sheet(isPresented: $newHairCutSheetIsPresenting) {
             LogNewHaircutSheet()
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("Done") {
-                    hideKeyboard()
-                }.foregroundStyle(Color.white)
-            }
         }
     }
     
@@ -486,24 +199,3 @@ struct ProfileScreen: View {
     ProfileScreen()
         .environmentObject(viewModel)
 }
-
-
-//VStack {
-//    if let image = capturedImage {
-//        Image(uiImage: image)
-//            .resizable()
-//            .scaledToFit()
-//            .onAppear {
-//                print(image)
-//            }
-//    }
-//    
-//    Button("Take Photo") {
-//        showCamera = true
-//    }
-//    .sheet(isPresented: $showCamera) {
-//        CameraView { image in
-//            self.capturedImage = image
-//        }
-//    }
-//}

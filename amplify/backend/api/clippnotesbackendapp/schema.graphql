@@ -2,7 +2,6 @@ type Haircut @model @auth(rules: [{allow: public}]) {
   id: ID!
   date: AWSDateTime
   stylist: String
-  photosByView: AWSJSON
   notes: String
   customerID: ID! @index(name: "byClient")
 }

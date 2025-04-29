@@ -11,14 +11,36 @@ import Amplify
 struct HistoryCellView: View {
     
     @State var haircut: Haircut
+    var imageURL: URL?
     
     var body: some View {
         VStack {
             HStack {
-                Image("frontImage")
-                    .resizable()
-                    .frame(width: 60, height: 60)
-                    .cornerRadius(8)
+                if let thumbnail = imageURL {
+                    AsyncImage(url: thumbnail) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 60, height: 60)
+                                .cornerRadius(8)
+                        case .failure:
+                            Text("Failed to load image.")
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                } else {
+                    Color.gray
+                        .overlay(Text("Loading..."))
+                }
+//                Image("frontImage")
+//                    .resizable()
+//                    .frame(width: 60, height: 60)
+//                    .cornerRadius(8)
                 
                 VStack(alignment: .leading) {
                     Text("\(haircut.date?.iso8601FormattedString(format: .short) ?? "")")
@@ -46,5 +68,5 @@ struct HistoryCellView: View {
 }
 
 #Preview {
-    HistoryCellView(haircut: Haircut(date: Temporal.DateTime.now(), stylist: "Stacy Brookes", photosByView: "", notes: "", customerID: ""))
+    HistoryCellView(haircut: Haircut(date: Temporal.DateTime.now(), stylist: "Stacy Brookes", notes: "", customerID: ""))
 }

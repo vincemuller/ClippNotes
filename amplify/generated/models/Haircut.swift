@@ -6,7 +6,6 @@ public struct Haircut: Model {
   public let id: String
   public var date: Temporal.DateTime?
   public var stylist: String?
-  public var photosByView: String?
   public var notes: String?
   public var customerID: String
   public var createdAt: Temporal.DateTime?
@@ -15,13 +14,11 @@ public struct Haircut: Model {
   public init(id: String = UUID().uuidString,
       date: Temporal.DateTime? = nil,
       stylist: String? = nil,
-      photosByView: String? = nil,
       notes: String? = nil,
       customerID: String) {
     self.init(id: id,
       date: date,
       stylist: stylist,
-      photosByView: photosByView,
       notes: notes,
       customerID: customerID,
       createdAt: nil,
@@ -30,7 +27,6 @@ public struct Haircut: Model {
   internal init(id: String = UUID().uuidString,
       date: Temporal.DateTime? = nil,
       stylist: String? = nil,
-      photosByView: String? = nil,
       notes: String? = nil,
       customerID: String,
       createdAt: Temporal.DateTime? = nil,
@@ -38,7 +34,6 @@ public struct Haircut: Model {
       self.id = id
       self.date = date
       self.stylist = stylist
-      self.photosByView = photosByView
       self.notes = notes
       self.customerID = customerID
       self.createdAt = createdAt

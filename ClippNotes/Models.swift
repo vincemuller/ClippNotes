@@ -9,30 +9,16 @@ import Foundation
 import SwiftUI
 
 
-struct HairViewKeys: Codable {
-    var frontKey: String
-    var backKey: String
-    var leftKey: String
-    var rightKey: String
+struct HaircutImage {
+    var front: URL?
+    var back: URL?
+    var left: URL?
+    var right: URL?
 }
 
-extension HairViewKeys {
-    func getJson() -> String {
-        var encodedString: String = ""
-        
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.outputFormatting = .prettyPrinted
-
-        do {
-            let encodePhotos = try jsonEncoder.encode(self)
-            
-            encodedString = String(data: encodePhotos, encoding: .utf8)!
-
-        } catch {
-            print(error.localizedDescription)
-        }
-        
-        return encodedString
-    }
-
+struct HaircutUIImages {
+    var front: UIImage?
+    var back: UIImage?
+    var left: UIImage?
+    var right: UIImage?
 }

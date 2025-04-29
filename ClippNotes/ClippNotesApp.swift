@@ -15,13 +15,15 @@ struct ClippNotesApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ClientListScreen()
+            ProfileScreen()
                 .environmentObject(viewModel)
                 .onAppear {
                     viewModel.configureAmplify()
                     Task {
-                        await viewModel.getCustomers()
-                        try await viewModel.fetchImageURLs()
+                        await viewModel.fetchCustomer()
+                        await viewModel.fetchHaircutsForSelectedCustomer()
+//                        try await viewModel.fetchImageURLsForHaircutThumbnails()
+//                        try await viewModel.fetchHaircutImagesForSelectedHaircut()
                     }
                 }
         }

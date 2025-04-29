@@ -8,7 +8,6 @@ extension Haircut {
     case id
     case date
     case stylist
-    case photosByView
     case notes
     case customerID
     case createdAt
@@ -37,7 +36,6 @@ extension Haircut {
       .field(haircut.id, is: .required, ofType: .string),
       .field(haircut.date, is: .optional, ofType: .dateTime),
       .field(haircut.stylist, is: .optional, ofType: .string),
-      .field(haircut.photosByView, is: .optional, ofType: .string),
       .field(haircut.notes, is: .optional, ofType: .string),
       .field(haircut.customerID, is: .required, ofType: .string),
       .field(haircut.createdAt, is: .optional, isReadOnly: true, ofType: .dateTime),
