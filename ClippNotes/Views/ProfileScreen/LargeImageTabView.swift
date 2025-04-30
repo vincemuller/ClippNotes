@@ -24,9 +24,10 @@ struct LargeImageTabView: View {
             } else {
                 Color.gray
                     .overlay(Text("Loading..."))
+                    .frame(height: height * 0.42)
             }
         }
-        .frame(height: height)
+        .frame(height: height * 0.42)
         .clipped()
         .mask(RoundedRectangle(cornerRadius: 20))
         .padding(.horizontal)

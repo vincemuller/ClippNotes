@@ -14,10 +14,7 @@ struct CustomerHeaderView: View {
     var body: some View {
         HStack {
             VStack (alignment: .leading, spacing: 5) {
-                Text(customerName)
-                    .font(Font.custom("anta-regular", size: 25))
-                    .foregroundStyle(Color.white)
-                    .padding(.leading, 20)
+                SectionTextView(text: customerName, fontSize: 25, textColor: Color.white)
                 Text("Last haircut: \(days.description) days ago")
                     .font(.system(size: 14))
                     .foregroundStyle(Color.clippnotesYellow.opacity(0.5))

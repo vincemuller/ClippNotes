@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftUI
+
 
 enum HairSection: Identifiable, CaseIterable {
     case front, back, all, left, right
@@ -27,9 +27,4 @@ enum HairSection: Identifiable, CaseIterable {
     }
 }
 
-extension View {
-    func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
-}
 

@@ -16,8 +16,6 @@ struct LogNewHaircutSheet: View {
     @State private var haircutNotes: String = ""
     @State private var newHaircutSelectedHairSection: HairSection = .all
     
-    @StateObject private var keyboard = KeyboardResponder()
-    
     
     let height: CGFloat = 793
     

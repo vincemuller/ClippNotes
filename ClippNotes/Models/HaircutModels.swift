@@ -1,5 +1,5 @@
 //
-//  Models.swift
+//  HaircutModels.swift
 //  ClippNotes
 //
 //  Created by Vince Muller on 4/10/25.
