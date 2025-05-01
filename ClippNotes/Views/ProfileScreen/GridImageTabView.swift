@@ -25,8 +25,15 @@ struct GridImageTabView: View {
                             .clipped()
                             .frame(height: height * 0.21)
                     } else {
-                        Color.gray
-                            .overlay(Text("Loading..."))
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.clippnotesLightBlue)
+                                .clipped()
+                                .mask {
+                                    UnevenRoundedRectangle(topLeadingRadius: 20)
+                                }
+                            ProgressView()
+                        }
                     }
                 }
                 .frame(height: height * 0.21)
@@ -49,8 +56,15 @@ struct GridImageTabView: View {
                             .clipped()
                             .frame(height: height * 0.21)
                     } else {
-                        Color.gray
-                            .overlay(Text("Loading..."))
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.clippnotesLightBlue)
+                                .clipped()
+                                .mask {
+                                    UnevenRoundedRectangle(topTrailingRadius: 20)
+                                }
+                            ProgressView()
+                        }
                     }
                 }
                 .frame(height: height * 0.21)
@@ -75,8 +89,15 @@ struct GridImageTabView: View {
                             .clipped()
                             .frame(height: height * 0.21)
                     } else {
-                        Color.gray
-                            .overlay(Text("Loading..."))
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.clippnotesLightBlue)
+                                .clipped()
+                                .mask {
+                                    UnevenRoundedRectangle(bottomLeadingRadius: 20)
+                                }
+                            ProgressView()
+                        }
                     }
                 }
                 .frame(height: height * 0.21)
@@ -99,8 +120,15 @@ struct GridImageTabView: View {
                             .clipped()
                             .frame(height: height * 0.21)
                     } else {
-                        Color.gray
-                            .overlay(Text("Loading..."))
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.clippnotesLightBlue)
+                                .clipped()
+                                .mask {
+                                    UnevenRoundedRectangle(bottomTrailingRadius: 20)
+                                }
+                            ProgressView()
+                        }
                     }
                 }
                 .frame(height: height * 0.21)

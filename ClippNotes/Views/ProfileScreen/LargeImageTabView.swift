@@ -22,7 +22,7 @@ struct LargeImageTabView: View {
                     .clipped()
                     .frame(height: height * 0.42)
             } else {
-                Color.gray
+                ProgressView()
                     .overlay(Text("Loading..."))
                     .frame(height: height * 0.42)
             }

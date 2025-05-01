@@ -15,6 +15,7 @@ struct LogNewHaircutSheet: View {
     @State private var hairImages: [HairSection:UIImage] = [:]
     @State private var haircutNotes: String = ""
     @State private var newHaircutSelectedHairSection: HairSection = .all
+    @State private var progressViewPresenting: Bool = false
     
     
     let height: CGFloat = 793
@@ -199,10 +200,19 @@ struct LogNewHaircutSheet: View {
                     .padding()
                 }
                 Button {
+                    
+                    guard !haircutNotes.isEmpty || hairImages.count > 3 else {
+                        print("rejected!")
+                        return
+                    }
+                    
+                    progressViewPresenting = true
+                    
                     Task {
                         await viewModel.createHaircut(notes: haircutNotes, hairImages: hairImages)
                         await viewModel.fetchHaircutsForSelectedCustomer()
                     }
+                    
                 } label: {
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
@@ -214,6 +224,18 @@ struct LogNewHaircutSheet: View {
                     }
                 }
                 .padding(.horizontal)
+            }
+            .onChange(of: viewModel.haircutThumbnails) { _, _ in
+                progressViewPresenting = false
+                self.presentationMode.wrappedValue.dismiss()
+            }
+        }
+        .overlay {
+            if progressViewPresenting {
+                ZStack {
+                    Color.black.opacity(0.1)
+                    ProgressView()
+                }
             }
         }
         .sheet(isPresented: $showCamera) {

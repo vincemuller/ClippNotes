@@ -21,6 +21,8 @@ struct HistoryCellView: View {
                         switch phase {
                         case .empty:
                             ProgressView()
+                                .frame(width: 60, height: 60)
+                                .cornerRadius(8)
                         case .success(let image):
                             image
                                 .resizable()
@@ -29,13 +31,17 @@ struct HistoryCellView: View {
                                 .cornerRadius(8)
                         case .failure:
                             Text("Failed to load image.")
+                                .font(.system(size: 12))
+                                .frame(width: 60, height: 60)
+                                .cornerRadius(8)
                         @unknown default:
                             EmptyView()
                         }
                     }
                 } else {
-                    Color.gray
-                        .overlay(Text("Loading..."))
+                    ProgressView()
+                        .frame(width: 60, height: 60)
+                        .cornerRadius(8)
                 }
 //                Image("frontImage")
 //                    .resizable()
