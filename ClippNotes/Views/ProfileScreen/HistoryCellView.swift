@@ -43,10 +43,6 @@ struct HistoryCellView: View {
                         .frame(width: 60, height: 60)
                         .cornerRadius(8)
                 }
-//                Image("frontImage")
-//                    .resizable()
-//                    .frame(width: 60, height: 60)
-//                    .cornerRadius(8)
                 
                 VStack(alignment: .leading) {
                     Text("\(haircut.date?.iso8601FormattedString(format: .short) ?? "")")

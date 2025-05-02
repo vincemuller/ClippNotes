@@ -70,7 +70,7 @@ struct ProfileScreen: View {
             }
         }
         .sheet(isPresented: $newHairCutSheetIsPresenting) {
-            LogNewHaircutSheet()
+            LogNewHaircutScreen()
         }
     }
     

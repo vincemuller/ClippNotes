@@ -33,6 +33,7 @@ struct GridImageTabView: View {
                                     UnevenRoundedRectangle(topLeadingRadius: 20)
                                 }
                             ProgressView()
+                                .controlSize(.large)
                         }
                     }
                 }
@@ -64,6 +65,7 @@ struct GridImageTabView: View {
                                     UnevenRoundedRectangle(topTrailingRadius: 20)
                                 }
                             ProgressView()
+                                .controlSize(.large)
                         }
                     }
                 }
@@ -97,6 +99,7 @@ struct GridImageTabView: View {
                                     UnevenRoundedRectangle(bottomLeadingRadius: 20)
                                 }
                             ProgressView()
+                                .controlSize(.large)
                         }
                     }
                 }
@@ -128,6 +131,7 @@ struct GridImageTabView: View {
                                     UnevenRoundedRectangle(bottomTrailingRadius: 20)
                                 }
                             ProgressView()
+                                .controlSize(.large)
                         }
                     }
                 }

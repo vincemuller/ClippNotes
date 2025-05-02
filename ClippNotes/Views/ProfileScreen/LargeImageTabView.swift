@@ -23,7 +23,7 @@ struct LargeImageTabView: View {
                     .frame(height: height * 0.42)
             } else {
                 ProgressView()
-                    .overlay(Text("Loading..."))
+                    .controlSize(.large)
                     .frame(height: height * 0.42)
             }
         }
