@@ -1,0 +1,94 @@
+{
+    "UserAgent": "aws-amplify-cli/2.0",
+    "Version": "1.0",
+    "api": {
+        "plugins": {
+            "awsAPIPlugin": {
+                "clippnotesbackendapp": {
+                    "endpointType": "GraphQL",
+                    "endpoint": "https://nakt4qxwcrarfniqwlg4kxhwwu.appsync-api.us-west-2.amazonaws.com/graphql",
+                    "region": "us-west-2",
+                    "authorizationType": "API_KEY",
+                    "apiKey": "da2-7eai5wgqrnewbp2xe3bqasmmwa"
+                }
+            }
+        }
+    },
+    "auth": {
+        "plugins": {
+            "awsCognitoAuthPlugin": {
+                "UserAgent": "aws-amplify/cli",
+                "Version": "0.1.0",
+                "IdentityManager": {
+                    "Default": {}
+                },
+                "AppSync": {
+                    "Default": {
+                        "ApiUrl": "https://nakt4qxwcrarfniqwlg4kxhwwu.appsync-api.us-west-2.amazonaws.com/graphql",
+                        "Region": "us-west-2",
+                        "AuthMode": "API_KEY",
+                        "ApiKey": "da2-7eai5wgqrnewbp2xe3bqasmmwa",
+                        "ClientDatabasePrefix": "clippnotesbackendapp_API_KEY"
+                    },
+                    "clippnotesbackendapp_AWS_IAM": {
+                        "ApiUrl": "https://nakt4qxwcrarfniqwlg4kxhwwu.appsync-api.us-west-2.amazonaws.com/graphql",
+                        "Region": "us-west-2",
+                        "AuthMode": "AWS_IAM",
+                        "ClientDatabasePrefix": "clippnotesbackendapp_AWS_IAM"
+                    }
+                },
+                "CredentialsProvider": {
+                    "CognitoIdentity": {
+                        "Default": {
+                            "PoolId": "us-west-2:cd24a60c-abb2-48b2-be31-41558f4de9a0",
+                            "Region": "us-west-2"
+                        }
+                    }
+                },
+                "CognitoUserPool": {
+                    "Default": {
+                        "PoolId": "us-west-2_lJHljtap2",
+                        "AppClientId": "7jr011pnh2velmsspaq11c44i5",
+                        "Region": "us-west-2"
+                    }
+                },
+                "Auth": {
+                    "Default": {
+                        "authenticationFlowType": "USER_SRP_AUTH",
+                        "mfaConfiguration": "OFF",
+                        "mfaTypes": [
+                            "SMS"
+                        ],
+                        "passwordProtectionSettings": {
+                            "passwordPolicyMinLength": 8,
+                            "passwordPolicyCharacters": []
+                        },
+                        "signupAttributes": [
+                            "EMAIL"
+                        ],
+                        "socialProviders": [],
+                        "usernameAttributes": [],
+                        "verificationMechanisms": [
+                            "EMAIL"
+                        ]
+                    }
+                },
+                "S3TransferUtility": {
+                    "Default": {
+                        "Bucket": "clippnotesbackendapp782d85c0a25d49acad9b6c899eb499a5-staging",
+                        "Region": "us-west-2"
+                    }
+                }
+            }
+        }
+    },
+    "storage": {
+        "plugins": {
+            "awsS3StoragePlugin": {
+                "bucket": "clippnotesbackendapp782d85c0a25d49acad9b6c899eb499a5-staging",
+                "region": "us-west-2",
+                "defaultAccessLevel": "guest"
+            }
+        }
+    }
+}

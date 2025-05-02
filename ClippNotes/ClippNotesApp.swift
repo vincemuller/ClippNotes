@@ -22,8 +22,6 @@ struct ClippNotesApp: App {
                     Task {
                         await viewModel.fetchCustomer()
                         await viewModel.fetchHaircutsForSelectedCustomer()
-//                        try await viewModel.fetchImageURLsForHaircutThumbnails()
-//                        try await viewModel.fetchHaircutImagesForSelectedHaircut()
                     }
                 }
         }

@@ -45,6 +45,7 @@ struct HaircutHistorySectionView: View {
                                 HistoryCellView(haircut: haircut, imageURL: viewModel.haircutThumbnails[haircut.id])
                                     .onTapGesture {
                                         viewModel.selectedHaircut = haircut
+                                        viewModel.haircutUIImages = nil
                                         selectedHairSection = .all
                                         Task {
                                             try await viewModel.fetchHaircutImagesForSelectedHaircut()

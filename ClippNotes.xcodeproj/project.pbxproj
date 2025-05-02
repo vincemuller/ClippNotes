@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		12A568C283F3938E14184EB2 /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = 57FC0589F4A45AAD909F6265 /* awsconfiguration.json */; };
 		2AEE29E3456EAA003E2E4E70 /* Haircut.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E61A0BC792F95E4D3C9EF8 /* Haircut.swift */; };
-		414C21D746DE89FD70DCC73D /* amplifyconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = E0F2DD130AD0DECE80C0A51B /* amplifyconfiguration.json */; };
 		4AEF6121240C7298346ABD0A /* Haircut+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A20F6469692D8EEBFE2F1ED /* Haircut+Schema.swift */; };
 		799AB249E3D70B87A32E12B0 /* AmplifyModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FB657A3AEAA33BEF2F1858 /* AmplifyModels.swift */; };
+		8755E0CC4B47EABCB70E4BEF /* amplifyconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = EB7317C12DC54EDC00829069 /* amplifyconfiguration.json */; };
+		957A950F4311196ABFB56145 /* awsconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = EB7317C22DC54EDC00829069 /* awsconfiguration.json */; };
 		9ACFFA147EC41690F6CF2038 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809978324E4A745A1ADFC643 /* Client.swift */; };
 		ACD3DEAF83474714D4C0C863 /* Client+Schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE383B9F0A787CD9F03729D /* Client+Schema.swift */; };
 		EB7126772DAB7D7100109F39 /* AWSAPIPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = EB7126762DAB7D7100109F39 /* AWSAPIPlugin */; };
@@ -23,17 +23,17 @@
 
 /* Begin PBXFileReference section */
 		0A20F6469692D8EEBFE2F1ED /* Haircut+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "Haircut+Schema.swift"; path = "amplify/generated/models/Haircut+Schema.swift"; sourceTree = "<group>"; };
-		57FC0589F4A45AAD909F6265 /* awsconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = awsconfiguration.json; sourceTree = "<group>"; };
 		809978324E4A745A1ADFC643 /* Client.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = Client.swift; path = amplify/generated/models/Client.swift; sourceTree = "<group>"; };
 		9FE383B9F0A787CD9F03729D /* Client+Schema.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = "Client+Schema.swift"; path = "amplify/generated/models/Client+Schema.swift"; sourceTree = "<group>"; };
 		A9E61A0BC792F95E4D3C9EF8 /* Haircut.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = Haircut.swift; path = amplify/generated/models/Haircut.swift; sourceTree = "<group>"; };
 		B1FB657A3AEAA33BEF2F1858 /* AmplifyModels.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; name = AmplifyModels.swift; path = amplify/generated/models/AmplifyModels.swift; sourceTree = "<group>"; };
-		E0F2DD130AD0DECE80C0A51B /* amplifyconfiguration.json */ = {isa = PBXFileReference; explicitFileType = text.json; path = amplifyconfiguration.json; sourceTree = "<group>"; };
 		EB4ACB282DA576ED0031D35E /* ClippNotes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClippNotes.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB7317C12DC54EDC00829069 /* amplifyconfiguration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = amplifyconfiguration.json; sourceTree = "<group>"; };
+		EB7317C22DC54EDC00829069 /* awsconfiguration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = awsconfiguration.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		EB4ACB3C2DA742150031D35E /* Exceptions for "ClippNotes" folder in "ClippNotes" target */ = {
+		EB4ACB3C2DA742150031D35E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -46,7 +46,7 @@
 		EB4ACB2A2DA576ED0031D35E /* ClippNotes */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				EB4ACB3C2DA742150031D35E /* Exceptions for "ClippNotes" folder in "ClippNotes" target */,
+				EB4ACB3C2DA742150031D35E /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
 			);
 			path = ClippNotes;
 			sourceTree = "<group>";
@@ -72,8 +72,8 @@
 		488DC4B48D68DAE01DDA3A23 /* AmplifyConfig */ = {
 			isa = PBXGroup;
 			children = (
-				57FC0589F4A45AAD909F6265 /* awsconfiguration.json */,
-				E0F2DD130AD0DECE80C0A51B /* amplifyconfiguration.json */,
+				EB7317C12DC54EDC00829069 /* amplifyconfiguration.json */,
+				EB7317C22DC54EDC00829069 /* awsconfiguration.json */,
 			);
 			name = AmplifyConfig;
 			sourceTree = "<group>";
@@ -180,8 +180,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				12A568C283F3938E14184EB2 /* awsconfiguration.json in Resources */,
-				414C21D746DE89FD70DCC73D /* amplifyconfiguration.json in Resources */,
+				957A950F4311196ABFB56145 /* awsconfiguration.json in Resources */,
+				8755E0CC4B47EABCB70E4BEF /* amplifyconfiguration.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

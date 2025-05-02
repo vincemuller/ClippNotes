@@ -49,7 +49,7 @@ class ViewModel: ObservableObject {
     // MARK: Customers & Haircuts
     
     func fetchCustomer() async {
-        let predicate = Client.keys.name == "Sara Muller"
+        let predicate = Client.keys.name == "Angela Russel"
         let request = GraphQLRequest<Client>.list(Client.self, where: predicate)
         
         do {
