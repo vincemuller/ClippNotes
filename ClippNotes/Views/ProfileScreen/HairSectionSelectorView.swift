@@ -11,11 +11,11 @@ struct HairSectionSelectorView: View {
     
     @Binding var selectedHairSection: HairSection
     
-    let columns: [GridItem] = [GridItem(.flexible()),
-                               GridItem(.flexible()),
-                               GridItem(.flexible()),
-                               GridItem(.flexible()),
-                               GridItem(.flexible())]
+    private let columns: [GridItem] = [GridItem(.flexible()),
+                                       GridItem(.flexible()),
+                                       GridItem(.flexible()),
+                                       GridItem(.flexible()),
+                                       GridItem(.flexible())]
     
     var body: some View {
         LazyVGrid(columns: columns) {

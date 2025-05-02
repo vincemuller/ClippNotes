@@ -1,15 +1,17 @@
-import Foundation
-import Amplify
-import AWSPluginsCore
-import AWSAPIPlugin
-import AWSS3StoragePlugin
-import AWSCognitoAuthPlugin
 import SwiftUI
+import Foundation
+
+import Amplify
+import AWSAPIPlugin
+import AWSCognitoAuthPlugin
+import AWSS3StoragePlugin
+import AWSPluginsCore
 
 
 
 @MainActor
 class ViewModel: ObservableObject {
+    
     // MARK: - Published Properties
 
     @Published var stylist: String = "Stacy Longstromb"
@@ -68,14 +70,11 @@ class ViewModel: ObservableObject {
     }
     
     func calculateDaysSinceLastHaircut() {
-        let haircutDate = selectedHaircut.date?.foundationDate
-        let now = Date()
-
-        guard haircutDate ?? Date() <= now else {
+        guard let haircutDate = selectedHaircut.date?.foundationDate, haircutDate <= Date() else {
             return
         }
 
-        let components = Calendar.current.dateComponents([.day], from: haircutDate ?? Date(), to: now)
+        let components = Calendar.current.dateComponents([.day], from: haircutDate, to: Date.now)
         daysSinceLastHaircut = components.day ?? 0
     }
     
@@ -140,46 +139,39 @@ class ViewModel: ObservableObject {
     
     // MARK: Image Upload & Download
     
-    func uploadHaircutImages(haircutID: String, hairImages: [HairSection:UIImage]) async {
+    func uploadHaircutImages(haircutID: String, hairImages: [HairSection: UIImage]) async {
+        do {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                for section in HairSection.allCases {
+                    if let image = hairImages[section] {
+                        let compressed = resizeImage(image: image, maxDimension: 1024)
+                        if let imageData = compressed.jpegData(compressionQuality: 0.6) {
+                            let key = "public/\(selectedCustomer.id)\(haircutID)\(section.label)Image.jpg"
 
-        for section in HairSection.allCases {
-            if let image = hairImages[section] {
-                let compressed = resizeImage(image: image, maxDimension: 1024)
-                if let imageData = compressed.jpegData(compressionQuality: 0.6) {
-                    let key = "public/\(selectedCustomer.id)\(haircutID)\(section.label)Image.jpg"
-                    
-                    let uploadTask = Amplify.Storage.uploadData(
-                        path: .fromString(key),
-                        data: imageData
-                    )
-                    
-                    Task {
-                        for await progress in await uploadTask.progress {
-                            print("Progress: \(progress)")
-                            if progress.isFinished {
-                                await fetchHaircutsForSelectedCustomer()
+                            group.addTask {
+                                let uploadTask = Amplify.Storage.uploadData(
+                                    path: .fromString(key),
+                                    data: imageData
+                                )
+
+                                for try await progress in await uploadTask.progress {
+                                    print("Upload progress for \(section.label): \(progress)")
+                                }
                             }
                         }
                     }
-                    
                 }
+
+                try await group.waitForAll()
             }
+            
+            await fetchHaircutsForSelectedCustomer()
+
+        } catch {
+            print("At least one upload failed: \(error)")
         }
     }
-    
-//    func fetchImageURLsForHaircutThumbnails() async throws {
-//        let result = try await Amplify.Storage.list(path: .fromString("public/\(selectedCustomer.id)"))
-//        
-//        guard !result.items.isEmpty else { return }
-//        
-//        for item in selectedCustomerHaircuts {
-//            let url = try await Amplify.Storage.getURL(path: .fromString("public/\(selectedCustomer.id)\(item.id)FRONT.jpg"))
-//            DispatchQueue.main.async {
-//                self.haircutThumbnails.append(url)
-//            }
-//        }
-//        
-//    }
+
     
     func fetchImageURLsForHaircutThumbnails() async throws {
         let result = try await Amplify.Storage.list(path: .fromString("public/\(selectedCustomer.id)"))
@@ -243,7 +235,6 @@ class ViewModel: ObservableObject {
             return collected
         }
         
-        // Update your haircutImages model (if needed you can adapt this to match your model)
         haircutUIImages = HaircutUIImages(
             front: images[.front],
             back: images[.back],
@@ -253,7 +244,11 @@ class ViewModel: ObservableObject {
     }
 
 
-    // MARK: Image Helper
+    // MARK: Helpers
+    
+    private func storageKey(for customerID: String, haircutID: String, section: HairSection) -> String {
+        return "public/\(customerID)\(haircutID)\(section.label)Image.jpg"
+    }
 
     private func resizeImage(image: UIImage, maxDimension: CGFloat) -> UIImage {
         let size = image.size
