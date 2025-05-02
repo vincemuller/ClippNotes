@@ -45,7 +45,7 @@ struct HistoryCellView: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    Text("\(haircut.date?.iso8601FormattedString(format: .short) ?? "")")
+                    Text("\(haircut.date?.foundationDate.formatted(.dateTime.month().day().year()) ?? "")")
                         .font(.system(size: 10))
                         .foregroundStyle(.white)
                     Text("Stylist: \(haircut.stylist ?? "")")
