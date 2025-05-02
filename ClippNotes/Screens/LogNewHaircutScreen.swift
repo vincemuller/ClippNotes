@@ -94,6 +94,7 @@ struct LogNewHaircutScreen: View {
                 ZStack {
                     Color.black.opacity(0.1)
                     ProgressView()
+                        .controlSize(.large)
                 }
             }
         }

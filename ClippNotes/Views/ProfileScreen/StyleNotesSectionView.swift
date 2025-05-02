@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StyleNotesSectionView: View {
     
-    @State var selectedHaircutNotes: String
+    var selectedHaircutNotes: String
     
     let height: CGFloat
     let width: CGFloat
