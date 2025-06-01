@@ -2,5 +2,5 @@
   "AppSyncApiName": "clippnotesbackendapp",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2025-04-14T03:52:46.831Z"
+  "AuthModeLastUpdated": "2025-06-01T19:43:26.293Z"
 }

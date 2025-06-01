@@ -11,8 +11,9 @@
           ],
           "defaultAuthentication": {
             "apiKeyConfig": {
-              "apiKeyExpirationDays": 30,
-              "description": "api key description"
+              "apiKeyExpirationDate": "2026-06-01T19:43:20.560Z",
+              "apiKeyExpirationDays": 365,
+              "description": "clippnotesAPI"
             },
             "authenticationType": "API_KEY"
           }
